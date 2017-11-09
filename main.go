@@ -13,12 +13,14 @@ func main() {
 }
 
 func startCounter() {
-	fmt.Println("Counter started...")
 	logg("Counter started...")
 
 	finalHandler := http.HandlerFunc(counter)
 	http.Handle("/", visigo.Counter(finalHandler))
-	http.ListenAndServe(":7777", nil)
+	err := http.ListenAndServe(":7777", nil)
+	if err != nil {
+		logg(err.Error())
+	}
 }
 
 func counter(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +41,11 @@ func logg(message string) {
 		fmt.Println("error opening file: %v", err)
 	}
 	defer f.Close()
-
 	log.SetOutput(f)
+
+	// print message to file
 	log.Println(message)
+
+	// print message to stdout
+	fmt.Println(message)
 }
