@@ -31,6 +31,7 @@ func counter(w http.ResponseWriter, r *http.Request) {
 		logg(err.Error())
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write([]byte(strconv.Itoa(int(count))))
 }
 
