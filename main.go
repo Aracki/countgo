@@ -27,12 +27,14 @@ func startCounter() {
 func counter(w http.ResponseWriter, r *http.Request) {
 	count, err := visigo.Visits(r.URL)
 	if err != nil {
-		panic(err)
 		logg(err.Error())
+		panic(err)
 	}
 
+	counter := strconv.Itoa(int(count))
+	logg("Incremented counter +1 = " + counter)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Write([]byte(strconv.Itoa(int(count))))
+	w.Write([]byte(counter))
 }
 
 // custom logging func
