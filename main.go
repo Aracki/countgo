@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"log"
+	"strconv"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func startCounter() {
 	logg("Counter started...")
 
 	finalHandler := http.HandlerFunc(counter)
-	http.Handle("/", visigo.Counter(finalHandler))
+	http.Handle("/count", visigo.Counter(finalHandler))
 	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
 		logg(err.Error())
@@ -29,8 +30,8 @@ func counter(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 		logg(err.Error())
 	}
-	response := fmt.Sprintf("This page was viewed by %d unique visitors", count)
-	w.Write([]byte(response))
+
+	w.Write([]byte(strconv.Itoa(int(count))))
 }
 
 // custom logging func
