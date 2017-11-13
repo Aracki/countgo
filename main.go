@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"github.com/matoous/visigo"
+	"github.com/aracki/countgo/mongodb"
 	"fmt"
 	"os"
 	"log"
@@ -31,8 +32,11 @@ func counter(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	// insert visitor into mongodb
+	mongodb.InsertVisitor(r)
+
 	counter := strconv.Itoa(int(count))
-	logg("Incremented counter +1 = " + counter)
+	logg("Incremented counter = " + counter)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write([]byte(counter))
 }
