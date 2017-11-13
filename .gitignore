@@ -27,6 +27,7 @@
 .idea/dictionaries
 .idea/modules.xml
 .idea/vcs.xml
+.idea/**
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
