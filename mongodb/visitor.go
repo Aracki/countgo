@@ -39,9 +39,6 @@ func InsertVisitor(r *http.Request) {
 
 	ip := realip.RealIP(r)
 
-	//logg("Inserting visitor with ip=" + ip)
-	fmt.Println("Inserting visitor with ip=" + ip)
-
 	session := getSession()
 	defer session.Close()
 

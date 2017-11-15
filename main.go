@@ -38,16 +38,15 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logg(err.Error())
 	}
+	visitorsNum := strconv.Itoa(int(num))
+	logg("Current visitors number = " + visitorsNum)
 
 	// if counter is bigger than number of documents in mongodb
 	if int(count) > num {
 		// insert visitor into mongodb
-		logg("Inserting visitor with " + realip.RealIP(r) + " IP on date= " + time.Now().String())
+		logg("Inserting visitor with " + realip.RealIP(r) + " IP on date " + time.Now().String())
 		mongodb.InsertVisitor(r)
 	}
-
-	visitorsNum := strconv.Itoa(int(num))
-	logg("Incremented visitors number = " + visitorsNum)
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write([]byte(visitorsNum))
