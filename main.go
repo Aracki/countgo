@@ -5,7 +5,6 @@ import (
 	"github.com/matoous/visigo"
 	"github.com/tomasen/realip"
 	"github.com/aracki/countgo/mongodb"
-	"fmt"
 	"os"
 	"log"
 	"strconv"
@@ -16,12 +15,17 @@ func main() {
 	startCounter()
 }
 
+const (
+	countUrl = "/count"
+	port     = ":7777"
+)
+
 func startCounter() {
 	logg("Counter started...")
 
 	finalHandler := http.HandlerFunc(counter)
-	http.Handle("/count", visigo.Counter(finalHandler))
-	err := http.ListenAndServe(":7777", nil)
+	http.Handle(countUrl, visigo.Counter(finalHandler))
+	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		logg(err.Error())
 	}
@@ -57,14 +61,11 @@ func logg(message string) {
 
 	f, err := os.OpenFile("logfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		fmt.Println("error opening file: %v", err)
+		log.Fatalln("error opening file: %v", err)
 	}
 	defer f.Close()
 	log.SetOutput(f)
 
 	// print message to file
 	log.Println(message)
-
-	// print message to stdout
-	fmt.Println(message)
 }
