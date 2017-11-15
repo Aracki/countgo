@@ -49,7 +49,7 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Write([]byte(visitorsNum))
+	w.Write([]byte(strconv.Itoa(int(count))))
 }
 
 // custom logging func
