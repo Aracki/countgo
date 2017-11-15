@@ -3,11 +3,13 @@ package main
 import (
 	"net/http"
 	"github.com/matoous/visigo"
+	"github.com/tomasen/realip"
 	"github.com/aracki/countgo/mongodb"
 	"fmt"
 	"os"
 	"log"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -32,8 +34,12 @@ func counter(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	// insert visitor into mongodb
-	mongodb.InsertVisitor(r)
+	// if counter is bigger than number of documents in mongodb
+	if num := mongodb.GetNumberOfVisitors(); int(count) > num {
+		// insert visitor into mongodb
+		logg("Inserting visitor with " + realip.RealIP(r) + " IP on date= " + time.Now().String())
+		mongodb.InsertVisitor(r)
+	}
 
 	counter := strconv.Itoa(int(count))
 	logg("Incremented counter = " + counter)
