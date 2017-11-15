@@ -57,7 +57,7 @@ func InsertVisitor(r *http.Request) {
 	}
 }
 
-func GetNumberOfVisitors() int {
+func GetNumberOfVisitors() (int, error) {
 
 	session := getSession()
 	defer session.Close()
@@ -68,5 +68,5 @@ func GetNumberOfVisitors() int {
 		panic(err)
 	}
 
-	return totalNum
+	return totalNum, err
 }

@@ -34,7 +34,10 @@ func counter(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	num := mongodb.GetNumberOfVisitors()
+	num, err := mongodb.GetNumberOfVisitors()
+	if err != nil {
+		logg(err.Error())
+	}
 
 	// if counter is bigger than number of documents in mongodb
 	if int(count) > num {
