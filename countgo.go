@@ -1,0 +1,70 @@
+package countgo
+
+import (
+	"github.com/clarkduvall/hyperloglog"
+	"github.com/tomasen/realip"
+	"errors"
+	"hash/fnv"
+	"net/http"
+	"github.com/aracki/countgo/db"
+)
+
+const (
+	defaultPrecision = 18
+)
+
+type hashableIp struct {
+	realIp []byte
+}
+
+func (hip *hashableIp) Sum64() uint64 {
+	h := fnv.New64a()
+	h.Write(hip.realIp)
+	return h.Sum64()
+}
+
+var counter map[string]*hyperloglog.HyperLogLogPlus
+
+// ErrCount - error returned when you try to get count but didn't register middleware
+var ErrCount = errors.New("Count not found or error in HyperLogLog")
+
+// Visits - get visits for given URL
+func Visits(r *http.Request) (uint64, error) {
+	if counter == nil {
+		// no, you didn't ...
+		panic("You need to register Visigo Counter first!")
+	}
+
+	if hll, found := counter[r.URL.String()]; found {
+		// insert each visitor into mongodb
+		db.InsertVisitor(r)
+
+		return hll.Count(), nil
+	}
+	return 0, ErrCount
+}
+
+// Counter - registers middleware for visits counting
+func Counter(next http.Handler) http.Handler {
+	counter = make(map[string]*hyperloglog.HyperLogLogPlus)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if hll, found := counter[r.URL.String()]; !found {
+			// get hyperloglog or fail silently
+			if l, err := hyperloglog.NewPlus(defaultPrecision); err == nil {
+				ip := &hashableIp{
+					realIp: []byte(realip.RealIP(r)),
+				}
+				l.Add(ip)
+				counter[r.URL.String()] = l
+			}
+		} else {
+			// it's perfectly fine to omit map assignment since it is a pointer
+			ip := &hashableIp{
+				realIp: []byte(realip.RealIP(r)),
+			}
+			hll.Add(ip)
+		}
+		// serve
+		next.ServeHTTP(w, r)
+	})
+}
