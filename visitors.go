@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
+	"os"
 )
 
 const (
@@ -95,7 +96,7 @@ func (db database) GetDistinctPublicIPs() ([]string, error) {
 
 func (c *conf) getConf() *conf {
 
-	yamlFile, err := ioutil.ReadFile("/Users/raca/GoglandProjects/application.yml")
+	yamlFile, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/application.yml")
 	if err != nil {
 		panic(err)
 	}
