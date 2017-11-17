@@ -23,13 +23,6 @@ func startCounter() {
 	if err != nil {
 		logg(err.Error())
 	}
-
-	//TODO na serveru nema main fajla
-	//TODO na serveru nema main fajla
-	//TODO na serveru nema main fajla
-	//TODO na serveru nema main fajla
-	//TODO na serveru nema main fajla
-	//TODO na serveru nema main fajla
 }
 
 func counter(w http.ResponseWriter, r *http.Request) {
