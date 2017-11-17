@@ -8,6 +8,7 @@ import (
 	"os"
 	"log"
 	"github.com/aracki/countgo/db"
+	"fmt"
 )
 
 func main() {
@@ -54,9 +55,9 @@ func counter(w http.ResponseWriter, r *http.Request) {
 // custom logging func
 func logg(message string) {
 
-	f, err := os.OpenFile("visitors.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(os.Getenv("GOPATH") + "/visitors.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalln("error opening file: %v", err)
+		fmt.Printf("Error opening file: %v", err)
 	}
 	defer f.Close()
 	log.SetOutput(f)
