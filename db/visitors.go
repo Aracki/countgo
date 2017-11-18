@@ -1,67 +1,58 @@
 package db
 
 import (
-	"gopkg.in/mgo.v2"
+	"log"
+	"net/http"
+	"github.com/tomasen/realip"
 	"gopkg.in/mgo.v2/bson"
 	"time"
-	"github.com/tomasen/realip"
-	"net/http"
-	"io/ioutil"
-	"gopkg.in/yaml.v2"
-	"os"
+	"gopkg.in/mgo.v2"
 )
+
+var mgoSession *mgo.Session
 
 const (
 	c_visitors = "visitors"
 )
 
-type conf struct {
+type Database struct {
+	dbconfig Conf
+}
+
+type Conf struct {
 	Host     string `yaml: "host"`
 	Database string `yaml: "database"`
 	Username string `yaml: "username"`
 	Password string `yaml: "password"`
 }
 
-type database struct {
-	dbconfig conf
+func NewDb(c Conf) *Database {
+	mgoSession = initMgoSession(c)
+	return &Database{c}
 }
 
-func NewDb() *database {
-	var c conf
-	c.getConf()
-	return &database{c}
-}
-
-func (db database) Config() conf {
-	return db.dbconfig
-}
-
-func (db database) getSession() *mgo.Session {
-
-	info := &mgo.DialInfo{
-		Addrs:    []string{db.dbconfig.Host},
-		Timeout:  60 * time.Second,
-		Database: db.dbconfig.Database,
-		Username: db.dbconfig.Username,
-		Password: db.dbconfig.Password,
+func initMgoSession(c Conf) *mgo.Session {
+	if mgoSession == nil {
+		var err error
+		info := &mgo.DialInfo{
+			Addrs:    []string{c.Host},
+			Database: c.Database,
+			Username: c.Username,
+			Password: c.Password,
+		}
+		mgoSession, err = mgo.DialWithInfo(info)
+		if err != nil {
+			log.Fatal("Failed to start the Mongo session")
+		}
 	}
-
-	session, err := mgo.DialWithInfo(info)
-	if err != nil {
-		panic(err)
-	}
-
-	return session
+	return mgoSession.Clone()
 }
 
-func (db database) InsertVisitor(r *http.Request) error {
+func (db Database) InsertVisitor(r *http.Request) error {
 
 	ip := realip.RealIP(r)
 
-	session := db.getSession()
-	defer session.Close()
-
-	c := session.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
 
 	err := c.Insert(bson.M{
 		"ip":   ip,
@@ -71,40 +62,19 @@ func (db database) InsertVisitor(r *http.Request) error {
 	return err
 }
 
-func (db database) GetNumberOfVisitors() (int, error) {
+func (db Database) GetNumberOfVisitors() (int, error) {
 
-	session := db.getSession()
-	defer session.Close()
-
-	c := session.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
 	totalNum, err := c.Count()
 
 	return totalNum, err
 }
 
-func (db database) GetDistinctPublicIPs() ([]string, error) {
+func (db Database) GetDistinctPublicIPs() ([]string, error) {
 
-	session := db.getSession()
-	defer session.Close()
-
-	c := session.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
 	var result []string
 	err := c.Find(nil).Distinct("ip", &result)
 
 	return result, err
-}
-
-func (c *conf) getConf() *conf {
-
-	yamlFile, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/application.yml")
-	if err != nil {
-		panic(err)
-	}
-
-	err = yaml.Unmarshal(yamlFile, c)
-	if err != nil {
-		panic(err)
-	}
-
-	return c
 }

@@ -1,17 +1,44 @@
 package main
 
 import (
-	"net/http"
-	"github.com/tomasen/realip"
-	"strconv"
-	"time"
+	"io/ioutil"
 	"os"
-	"log"
 	"github.com/aracki/countgo/db"
+	"net/http"
 	"fmt"
+	"log"
+	"gopkg.in/yaml.v2"
+	"strconv"
+	"github.com/tomasen/realip"
+	"time"
+	"flag"
 )
 
+var configPath string
+var mdb *db.Database
+
 func main() {
+	fmt.Println("Started...")
+
+	flag.StringVar(&configPath, "config", "", "provide config path")
+	flag.Parse()
+
+	if configPath == "" {
+		configPath = "/etc/countgo/config.yml"
+	}
+
+	config, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/application.yml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// init mdb with config
+	var c db.Conf
+	if err := yaml.Unmarshal(config, &c); err != nil {
+		log.Fatalln(err)
+	}
+	mdb = db.NewDb(c)
+
 	startCounter()
 }
 
@@ -31,8 +58,7 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// get distinct public ip visitors from mongodb
-	uniqueVisitors, err := db.NewDb().GetDistinctPublicIPs()
-	db.NewDb()
+	uniqueVisitors, err := mdb.GetDistinctPublicIPs()
 	if err != nil {
 		w.Write([]byte("Cannot speak with mongodb"))
 	}
@@ -41,10 +67,10 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	// insert visitor into db
 	logg("Inserting visitor with " + realip.RealIP(r) +
 		" IP on date " + time.Now().String())
-	db.NewDb().InsertVisitor(r)
+	mdb.InsertVisitor(r)
 
 	// again call mongodb for distinct visitors
-	updatedUniqueVisitors, err := db.NewDb().GetDistinctPublicIPs()
+	updatedUniqueVisitors, err := mdb.GetDistinctPublicIPs()
 	if err != nil {
 		w.Write([]byte("Cannot speak with mongodb"))
 	}
@@ -55,7 +81,7 @@ func counter(w http.ResponseWriter, r *http.Request) {
 // custom logging func
 func logg(message string) {
 
-	f, err := os.OpenFile(os.Getenv("GOPATH") + "/visitors.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(os.Getenv("GOPATH")+"/visitors.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Printf("Error opening file: %v", err)
 	}
