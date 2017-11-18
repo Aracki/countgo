@@ -12,7 +12,10 @@ import (
 var mgoSession *mgo.Session
 
 const (
-	c_visitors = "visitors"
+	c_visitors   = "visitors"
+	d_ip         = "ip"
+	d_date       = "date"
+	d_user_agent = "user_agent"
 )
 
 type Database struct {
@@ -51,12 +54,14 @@ func initMgoSession(c Conf) *mgo.Session {
 func (db Database) InsertVisitor(r *http.Request) error {
 
 	ip := realip.RealIP(r)
+	userAgent := r.Header.Get("User-Agent")
 
 	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
 
 	err := c.Insert(bson.M{
-		"ip":   ip,
-		"date": time.Now(),
+		d_ip:         ip,
+		d_date:       time.Now(),
+		d_user_agent: userAgent,
 	})
 
 	return err
