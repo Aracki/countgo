@@ -3,10 +3,10 @@ package db
 import (
 	"log"
 	"net/http"
-	"github.com/tomasen/realip"
 	"gopkg.in/mgo.v2/bson"
-	"time"
 	"gopkg.in/mgo.v2"
+	"github.com/tomasen/realip"
+	"time"
 )
 
 var mgoSession *mgo.Session
@@ -53,16 +53,15 @@ func initMgoSession(c Conf) *mgo.Session {
 
 func (db Database) InsertVisitor(r *http.Request) error {
 
-	ip := realip.RealIP(r)
-	userAgent := r.Header.Get("User-Agent")
+	data := bson.M{}
+	data[d_ip] = realip.RealIP(r)
+	data[d_date] = time.Now()
+	for k, v := range r.Header {
+		data[k] = v
+	}
 
 	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
-
-	err := c.Insert(bson.M{
-		d_ip:         ip,
-		d_date:       time.Now(),
-		d_user_agent: userAgent,
-	})
+	err := c.Insert(data)
 
 	return err
 }
