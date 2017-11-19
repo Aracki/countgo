@@ -23,6 +23,7 @@ func main() {
 	flag.StringVar(&configPath, "config", "", "provide config path")
 	flag.Parse()
 
+	// todo let user change config path
 	if configPath == "" {
 		configPath = "/etc/countgo/config.yml"
 	}
@@ -45,8 +46,7 @@ func main() {
 func startCounter() {
 	logg("Counter started...")
 
-	finalHandler := http.HandlerFunc(counter)
-	http.Handle("/count", finalHandler)
+	http.Handle("/count", http.HandlerFunc(counter))
 	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
 		logg(err.Error())
