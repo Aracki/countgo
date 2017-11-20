@@ -20,15 +20,15 @@ var mdb *db.Database
 func main() {
 	fmt.Println("Started...")
 
+	// read -config flag
 	flag.StringVar(&configPath, "config", "", "provide config path")
 	flag.Parse()
-
-	// todo let user change config path
 	if configPath == "" {
 		configPath = "/etc/countgo/config.yml"
 	}
 
-	config, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/application.yml")
+	// read config file
+	config, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		log.Fatalln(err)
 	}
