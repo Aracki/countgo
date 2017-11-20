@@ -19,6 +19,8 @@ var mdb *db.Database
 
 func main() {
 
+	fmt.Println("Application started...")
+
 	readConfig()
 	startCounter()
 }
@@ -94,3 +96,4 @@ func readConfig() {
 	}
 	mdb = db.NewDb(c)
 }
+
