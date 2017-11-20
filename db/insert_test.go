@@ -32,7 +32,6 @@ func init() {
 }
 
 func TestDatabase_InsertVisitor_ShareSession(t *testing.T) {
-	fmt.Println("Test started...")
 
 	for i := 1; i <= 10; i++ {
 		data := bson.M{
@@ -44,7 +43,6 @@ func TestDatabase_InsertVisitor_ShareSession(t *testing.T) {
 }
 
 func TestDatabase_InsertVisitor_CloningSession(t *testing.T) {
-	fmt.Println("Test started...")
 
 	for i := 1; i <= 10; i++ {
 		data := bson.M{
@@ -58,7 +56,6 @@ func TestDatabase_InsertVisitor_CloningSession(t *testing.T) {
 }
 
 func TestDatabase_InsertVisitor_RecreateSession(t *testing.T) {
-	fmt.Println("Test started...")
 
 	for i := 1; i <= 10; i++ {
 		data := bson.M{
