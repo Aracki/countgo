@@ -3,14 +3,15 @@ package db
 import (
 	"log"
 	"gopkg.in/mgo.v2"
+	"time"
 )
 
 var mgoSession *mgo.Session
 
 const (
-	c_visitors   = "visitors"
-	d_ip         = "ip"
-	d_date       = "date"
+	c_visitors = "visitors"
+	d_ip       = "ip"
+	d_date     = "date"
 )
 
 type Database struct {
@@ -37,10 +38,11 @@ func initMgoSession(c Conf) *mgo.Session {
 			Database: c.Database,
 			Username: c.Username,
 			Password: c.Password,
+			Timeout:  time.Second * 1,
 		}
 		mgoSession, err = mgo.DialWithInfo(info)
 		if err != nil {
-			log.Fatal("Failed to start the Mongo session")
+			log.Fatalf("Create mongo session: %s\n", err)
 		}
 	}
 	return mgoSession.Clone()
