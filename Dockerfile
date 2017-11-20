@@ -1,3 +1,5 @@
+ENV GOPATH="/root/go"
+
 # Start from a Debian image with the latest version of Go installed
 # and a workspace (GOPATH) configured at /go.
 FROM golang
@@ -8,7 +10,7 @@ ADD . /go/src/github.com/aracki/countgo/
 # Build the countgo command inside the container.
 # (You may fetch or manage dependencies here,
 # either manually or with a tool like "godep".)
-RUN go install go/src/github.com/aracki/countgo/
+RUN go install github.com/aracki/countgo/
 
 # Run the outyet command by default when the container starts.
 ENTRYPOINT /go/bin/countgo
