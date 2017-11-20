@@ -10,8 +10,10 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-var configPath = "/etc/countgo/config-test.yml"
-var db *Database
+var (
+	configPath = "/etc/countgo/config-test.yml"
+	db         *Database
+)
 
 func init() {
 	fmt.Println("Init db config...")
@@ -38,6 +40,20 @@ func TestDatabase_InsertVisitor_ShareSession(t *testing.T) {
 		}
 		c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
 		c.Insert(data)
+	}
+}
+
+func TestDatabase_InsertVisitor_CloningSession(t *testing.T) {
+	fmt.Println("Test started...")
+
+	for i := 1; i <= 10; i++ {
+		data := bson.M{
+			"test": i,
+		}
+		session := mgoSession.Clone()
+		c := session.DB(db.dbconfig.Database).C(c_visitors)
+		c.Insert(data)
+		session.Close()
 	}
 }
 
