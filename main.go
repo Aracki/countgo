@@ -18,28 +18,8 @@ var configPath string
 var mdb *db.Database
 
 func main() {
-	fmt.Println("Started...")
 
-	// read -config flag
-	flag.StringVar(&configPath, "config", "", "provide config path")
-	flag.Parse()
-	if configPath == "" {
-		configPath = "/etc/countgo/config.yml"
-	}
-
-	// read config file
-	config, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	// init mdb with config
-	var c db.Conf
-	if err := yaml.Unmarshal(config, &c); err != nil {
-		log.Fatalln(err)
-	}
-	mdb = db.NewDb(c)
-
+	readConfig()
 	startCounter()
 }
 
@@ -90,4 +70,27 @@ func logg(message string) {
 
 	// print message to file
 	log.Println(message)
+}
+
+func readConfig() {
+
+	// read -config flag
+	flag.StringVar(&configPath, "config", "", "provide config path")
+	flag.Parse()
+	if configPath == "" {
+		configPath = "/etc/countgo/config.yml"
+	}
+
+	// read config file
+	config, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// init mdb with config
+	var c db.Conf
+	if err := yaml.Unmarshal(config, &c); err != nil {
+		log.Fatalln(err)
+	}
+	mdb = db.NewDb(c)
 }
