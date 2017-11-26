@@ -1,19 +1,12 @@
-ENV GOPATH="/root/go"
-
-# Start from a Debian image with the latest version of Go installed
-# and a workspace (GOPATH) configured at /go.
 FROM golang
+MAINTAINER Ivan Aracki <aracki.ivan@gmail.com>
 
-# Copy the local package files to the container's workspace.
-ADD . /go/src/github.com/aracki/countgo/
+ADD . /go/src/github.com/aracki/countgo
+COPY ./config.yml /etc/countgo/config.yml
 
-# Build the countgo command inside the container.
-# (You may fetch or manage dependencies here,
-# either manually or with a tool like "godep".)
-RUN go install github.com/aracki/countgo/
+RUN go get ./...
+ENV GOBIN=/go/bin
+RUN go install /go/src/github.com/aracki/countgo/cmd/aracki/main.go
+ENTRYPOINT /go/bin/main
 
-# Run the outyet command by default when the container starts.
-ENTRYPOINT /go/bin/countgo
-
-# Document that the service listens on port 8080.
 EXPOSE 8080
