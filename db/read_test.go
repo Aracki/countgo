@@ -1,17 +1,14 @@
 package db
 
 import (
-	"testing"
 	"log"
-	"fmt"
+	"testing"
 )
 
 func TestDatabase_GetNumberOfVisitors(t *testing.T) {
 
-	num, err := db.GetNumberOfVisitors()
+	_, err := db.GetNumberOfVisitors()
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	fmt.Println("Total visitors: ", num)
 }

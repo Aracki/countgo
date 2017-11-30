@@ -1,13 +1,14 @@
 package db
 
 import (
-	"gopkg.in/mgo.v2/bson"
+	"fmt"
 	"io/ioutil"
 	"log"
-	"gopkg.in/yaml.v2"
-	"fmt"
 	"testing"
+
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -33,49 +34,43 @@ func init() {
 
 func TestDatabase_InsertVisitor_ShareSession(t *testing.T) {
 
-	for i := 1; i <= 10; i++ {
-		data := bson.M{
-			"test": i,
-		}
-		c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
-		c.Insert(data)
+	data := bson.M{
+		"test": 1,
 	}
+	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
+	c.Insert(data)
 }
 
 func TestDatabase_InsertVisitor_CloningSession(t *testing.T) {
 
-	for i := 1; i <= 10; i++ {
-		data := bson.M{
-			"test": i,
-		}
-		session := mgoSession.Clone()
-		c := session.DB(db.dbconfig.Database).C(c_visitors)
-		c.Insert(data)
-		session.Close()
+	data := bson.M{
+		"test": 2,
 	}
+	session := mgoSession.Clone()
+	c := session.DB(db.dbconfig.Database).C(c_visitors)
+	c.Insert(data)
+	session.Close()
 }
 
 func TestDatabase_InsertVisitor_RecreateSession(t *testing.T) {
 
-	for i := 1; i <= 10; i++ {
-		data := bson.M{
-			"test": i,
-		}
-
-		info := &mgo.DialInfo{
-			Addrs:    []string{db.dbconfig.Host},
-			Database: db.dbconfig.Database,
-			Username: db.dbconfig.Username,
-			Password: db.dbconfig.Password,
-		}
-		mgoSession, err := mgo.DialWithInfo(info)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
-		c.Insert(data)
-
-		mgoSession.Close()
+	data := bson.M{
+		"test": 3,
 	}
+
+	info := &mgo.DialInfo{
+		Addrs:    []string{db.dbconfig.Host},
+		Database: db.dbconfig.Database,
+		Username: db.dbconfig.Username,
+		Password: db.dbconfig.Password,
+	}
+	mgoSession, err := mgo.DialWithInfo(info)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
+	c.Insert(data)
+
+	mgoSession.Close()
 }
