@@ -1,17 +1,19 @@
 package main
 
 import (
-	"io/ioutil"
-	"os"
-	"github.com/aracki/countgo/db"
-	"net/http"
-	"fmt"
-	"log"
-	"gopkg.in/yaml.v2"
-	"strconv"
-	"github.com/tomasen/realip"
-	"time"
+	"encoding/json"
 	"flag"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"strconv"
+	"time"
+
+	"github.com/aracki/countgo/db"
+	"github.com/tomasen/realip"
+	"gopkg.in/yaml.v2"
 )
 
 var mdb *db.Database
@@ -28,10 +30,24 @@ func startCounter() {
 	logg("Counter started...")
 
 	http.Handle("/count", http.HandlerFunc(counter))
+	http.Handle("/aggr", http.HandlerFunc(aggr))
 	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
 		logg(err.Error())
 	}
+}
+
+func aggr(w http.ResponseWriter, r *http.Request) {
+	// fix CORS problem
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	uniqueVisitors, err := mdb.GetMostFrequentVisitors()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	jsonResponse, err := json.Marshal(uniqueVisitors)
+	w.Write(jsonResponse)
 }
 
 func counter(w http.ResponseWriter, r *http.Request) {

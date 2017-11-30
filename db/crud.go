@@ -73,11 +73,11 @@ func (db Database) GetMostFrequentVisitors() ([] uniqueVisitor, error) {
 				},
 			},
 		},
-		{"$unwind": "$User-Agent"},
+		{"$unwind": "$ip"},
 		{
 			"$group": bson.M{
 				"_id": bson.M{
-					"$toLower": "$User-Agent",
+					"$toLower": "$ip",
 				},
 				"count": bson.M{
 					"$sum": 1,
