@@ -9,33 +9,58 @@ import (
 )
 
 const (
-	ballab = "77.105.34.122"
+	c_visitors = "visitors"
+	ballab    = "77.105.34.122"
+	medakovic = "178.148.168.200"
 )
 
 type visitor struct {
 	Date           time.Time `bson:"date"`
 	Ip             string    `bson:"ip"`
-	AcceptEncoding string    `bson:"Accept-Encoding"`
-	CacheControl   string    `bson:"Cache-Control"`
-	UserAgent      string    `bson:"User-Agent"`
-	AcceptLanguage string    `bson:"Accept-Language"`
-	Accept         string    `bson:"Accept"`
-	Origin         string    `bson:"Origin"`
-	Connection     string    `bson:"Connection"`
-	Pragma         string    `bson:"Pragma"`
+	AcceptEncoding []string  `bson:"Accept-Encoding"`
+	CacheControl   []string  `bson:"Cache-Control"`
+	UserAgent      []string  `bson:"User-Agent"`
+	AcceptLanguage []string  `bson:"Accept-Language"`
+	Accept         []string  `bson:"Accept"`
+	Origin         []string  `bson:"Origin"`
+	Connection     []string  `bson:"Connection"`
+	Pragma         []string  `bson:"Pragma"`
+}
+
+type uniqueVisitor struct {
+	Ip    string `bson:"_id"`
+	Count int    `bson:"count"`
 }
 
 func (db Database) InsertVisitor(r *http.Request) error {
 
-	data := bson.M{}
-	data[d_ip] = realip.RealIP(r)
-	data[d_date] = time.Now()
+	newVisitor := visitor{}
+	newVisitor.Ip = realip.RealIP(r)
+	newVisitor.Date = time.Now()
 	for k, v := range r.Header {
-		data[k] = v
+		//newVisitor.k = v
+		switch k {
+		case "Accept-Encoding":
+			newVisitor.AcceptEncoding = v
+		case "Cache-Control":
+			newVisitor.CacheControl = v
+		case "User-Agent":
+			newVisitor.UserAgent = v
+		case "Accept-Language":
+			newVisitor.AcceptLanguage = v
+		case "Accept":
+			newVisitor.Accept = v
+		case "Origin":
+			newVisitor.Origin = v
+		case "Connection":
+			newVisitor.Connection = v
+		case "Pragma":
+			newVisitor.Pragma = v
+		}
 	}
 
 	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
-	err := c.Insert(data)
+	err := c.Insert(newVisitor)
 
 	return err
 }
@@ -54,11 +79,6 @@ func (db Database) GetDistinctPublicIPs() ([]string, error) {
 	err := c.Find(nil).Distinct("ip", &result)
 
 	return result, err
-}
-
-type uniqueVisitor struct {
-	Id    string `bson:"_id"`
-	Count int    `bson:"count"`
 }
 
 func (db Database) GetMostFrequentVisitors() ([] uniqueVisitor, error) {

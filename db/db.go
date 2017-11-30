@@ -9,12 +9,6 @@ import (
 
 var mgoSession *mgo.Session
 
-const (
-	c_visitors = "visitors"
-	d_ip       = "ip"
-	d_date     = "date"
-)
-
 type Database struct {
 	dbconfig Conf
 }
