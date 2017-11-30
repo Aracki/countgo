@@ -12,17 +12,17 @@ const (
 	ballab = "77.105.34.122"
 )
 
-type request struct {
-	Ip             string    `bson:"ip"`
+type visitor struct {
 	Date           time.Time `bson:"date"`
+	Ip             string    `bson:"ip"`
 	AcceptEncoding string    `bson:"Accept-Encoding"`
 	CacheControl   string    `bson:"Cache-Control"`
 	UserAgent      string    `bson:"User-Agent"`
 	AcceptLanguage string    `bson:"Accept-Language"`
-	Accept         string
-	Origin         string
-	Connection     string
-	Pragma         string
+	Accept         string    `bson:"Accept"`
+	Origin         string    `bson:"Origin"`
+	Connection     string    `bson:"Connection"`
+	Pragma         string    `bson:"Pragma"`
 }
 
 func (db Database) InsertVisitor(r *http.Request) error {
@@ -56,13 +56,47 @@ func (db Database) GetDistinctPublicIPs() ([]string, error) {
 	return result, err
 }
 
-func (db Database) GetMostFrequentVisitors() ([] request, error) {
+type uniqueVisitor struct {
+	Id    string `bson:"_id"`
+	Count int    `bson:"count"`
+}
+
+func (db Database) GetMostFrequentVisitors() ([] uniqueVisitor, error) {
+
+	queryDistinctCount := []bson.M{
+		{
+			"$match": bson.M{
+				"keywords": bson.M{
+					"$not": bson.M{
+						"$size": 0,
+					},
+				},
+			},
+		},
+		{"$unwind": "$User-Agent"},
+		{
+			"$group": bson.M{
+				"_id": bson.M{
+					"$toLower": "$User-Agent",
+				},
+				"count": bson.M{
+					"$sum": 1,
+				},
+			},
+		},
+		{
+			"$match": bson.M{
+				"count": bson.M{
+					"$gte": 2,
+				},
+			},
+		},
+	}
 
 	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
 
-	var requests []request
-	iter := c.Find(nil).Limit(20).Iter()
-	err := iter.All(&requests)
+	var uniqueVisitors []uniqueVisitor
+	err := c.Pipe(queryDistinctCount).All(&uniqueVisitors)
 
-	return requests, err
+	return uniqueVisitors, err
 }

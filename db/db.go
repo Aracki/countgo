@@ -2,8 +2,9 @@ package db
 
 import (
 	"log"
-	"gopkg.in/mgo.v2"
 	"time"
+
+	"gopkg.in/mgo.v2"
 )
 
 var mgoSession *mgo.Session
@@ -19,10 +20,10 @@ type Database struct {
 }
 
 type Conf struct {
-	Host     string `yaml: "host"`
-	Database string `yaml: "database"`
-	Username string `yaml: "username"`
-	Password string `yaml: "password"`
+	Host     string `yaml:"host"`
+	Database string `yaml:"database"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 func NewDb(c Conf) *Database {
