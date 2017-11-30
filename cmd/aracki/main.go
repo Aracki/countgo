@@ -14,7 +14,6 @@ import (
 	"flag"
 )
 
-var configPath string
 var mdb *db.Database
 
 func main() {
@@ -76,6 +75,8 @@ func logg(message string) {
 
 func readConfig() {
 
+	var configPath string
+
 	// read -config flag
 	flag.StringVar(&configPath, "config", "", "provide config path")
 	flag.Parse()
@@ -96,4 +97,3 @@ func readConfig() {
 	}
 	mdb = db.NewDb(c)
 }
-
