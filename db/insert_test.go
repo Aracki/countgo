@@ -37,7 +37,7 @@ func TestDatabase_InsertVisitor_ShareSession(t *testing.T) {
 	data := bson.M{
 		"test": 1,
 	}
-	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
 	c.Insert(data)
 }
 
@@ -47,7 +47,7 @@ func TestDatabase_InsertVisitor_CloningSession(t *testing.T) {
 		"test": 2,
 	}
 	session := mgoSession.Clone()
-	c := session.DB(db.dbconfig.Database).C(c_visitors)
+	c := session.DB(db.dbconfig.Database).C(cVisitors)
 	c.Insert(data)
 	session.Close()
 }
@@ -69,7 +69,7 @@ func TestDatabase_InsertVisitor_RecreateSession(t *testing.T) {
 		log.Fatalln(err)
 	}
 
-	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
 	c.Insert(data)
 
 	mgoSession.Close()

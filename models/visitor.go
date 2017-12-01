@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"sort"
+	"time"
+)
 
 const (
 	ballab    = "77.105.34.122"
@@ -23,4 +26,22 @@ type Visitor struct {
 type UniqueVisitor struct {
 	Ip    string `bson:"_id"`
 	Count int    `bson:"count"`
+}
+
+type UniqueVisitors []UniqueVisitor
+
+func (v UniqueVisitors) Len() int {
+	return len(v)
+}
+
+func (v UniqueVisitors) Less(i, j int) bool {
+	return v[i].Count < v[j].Count
+}
+
+func (v UniqueVisitors) Swap(i, j int) {
+	v[i], v[j] = v[j], v[i]
+}
+
+func (v UniqueVisitors) RankByVisitCount() {
+	sort.Sort(sort.Reverse(v))
 }

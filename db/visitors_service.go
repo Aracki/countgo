@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	c_visitors = "visitors"
+	cVisitors = "visitors"
 )
 
 func (db Database) InsertVisitor(r *http.Request) error {
@@ -19,7 +19,6 @@ func (db Database) InsertVisitor(r *http.Request) error {
 	newVisitor.Ip = realip.RealIP(r)
 	newVisitor.Date = time.Now()
 	for k, v := range r.Header {
-		//newVisitor.k = v
 		switch k {
 		case "Accept-Encoding":
 			newVisitor.AcceptEncoding = v
@@ -40,7 +39,7 @@ func (db Database) InsertVisitor(r *http.Request) error {
 		}
 	}
 
-	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
 	err := c.Insert(newVisitor)
 
 	return err
@@ -48,21 +47,21 @@ func (db Database) InsertVisitor(r *http.Request) error {
 
 func (db Database) GetNumberOfVisitors() (int, error) {
 
-	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
 	totalNum, err := c.Count()
 	return totalNum, err
 }
 
 func (db Database) GetDistinctPublicIPs() ([]string, error) {
 
-	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
 	var result []string
 	err := c.Find(nil).Distinct("ip", &result)
 
 	return result, err
 }
 
-func (db Database) GetMostFrequentVisitors() ([] models.UniqueVisitor, error) {
+func (db Database) GetMostFrequentVisitors() (models.UniqueVisitors, error) {
 
 	queryDistinctCount := []bson.M{
 		{
@@ -94,10 +93,13 @@ func (db Database) GetMostFrequentVisitors() ([] models.UniqueVisitor, error) {
 		},
 	}
 
-	c := mgoSession.DB(db.dbconfig.Database).C(c_visitors)
+	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
 
-	var uniqueVisitors []models.UniqueVisitor
+	var uniqueVisitors models.UniqueVisitors
 	err := c.Pipe(queryDistinctCount).All(&uniqueVisitors)
+
+	// sort by count number
+	uniqueVisitors.RankByVisitCount()
 
 	return uniqueVisitors, err
 }
