@@ -87,7 +87,7 @@ func (db Database) GetMostFrequentVisitors() (models.UniqueVisitors, error) {
 		{
 			"$match": bson.M{
 				"count": bson.M{
-					"$gte": 2,
+					"$gte": 1,
 				},
 			},
 		},
