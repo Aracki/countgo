@@ -116,3 +116,6 @@ Temporary Items
 
 # custom log file
 **.log
+
+# youtube secret file
+client_secret.json

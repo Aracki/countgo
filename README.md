@@ -10,3 +10,7 @@ Make config.yml in /etc/countgo/ with mongodb properties:
  username:
  password: 
 ```
+
+Download all libraries into your _$GOPATH_:
+
+`go get ./...`
