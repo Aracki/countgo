@@ -4,15 +4,20 @@ import (
 	"context"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 
+	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/youtube/v3"
 )
 
-func main() {
-	ctx := context.Background()
+// readConfigFile will return oauth2 config
+// based on client_secret.json which is located in project root
+func readConfigFile() *oauth2.Config {
 
-	b, err := ioutil.ReadFile("/Users/raca/go/src/github.com/aracki/countgo/youtube/client_secret.json")
+	filePath, _ := filepath.Abs("../client_secret.json")
+
+	b, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
@@ -23,6 +28,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
+
+	return config
+}
+
+func main() {
+	ctx := context.Background()
+
+	config := readConfigFile()
+
 	client := getClient(ctx, config)
 	service, err := youtube.New(client)
 
