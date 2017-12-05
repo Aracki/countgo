@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"sync"
 
 	"google.golang.org/api/youtube/v3"
 )
 
-// getChannelInfo uses forUsername
+// The getChannelInfo uses forUsername
 // to get info (id, tittle, totalViews and description)
 func getChannelInfo(service *youtube.Service, part string, forUsername string) {
 	call := service.Channels.List(part)
@@ -22,11 +24,12 @@ func getChannelInfo(service *youtube.Service, part string, forUsername string) {
 	fmt.Println(response.Items[0].Snippet.Description, "\n")
 }
 
-// getAllPlaylists returns all playlist for current user
+// The getAllPlaylists uses current user
+// maxResult is set to 50 (default is 5)
+// returns all playlists
 func getAllPlaylists(service *youtube.Service, part string) (playlists []*youtube.Playlist) {
 
 	call := service.Playlists.List(part)
-	// default maxResults is 5
 	call = call.MaxResults(50).Mine(true)
 	response, err := call.Do()
 	handleError(err, "")
@@ -38,30 +41,47 @@ func getAllPlaylists(service *youtube.Service, part string) (playlists []*youtub
 	return lists
 }
 
-// showPlaylistInfo goes through all playlists
-// and return videos count for each
-func showPlaylistsInfo(service *youtube.Service, part string, playlists []*youtube.Playlist) {
+// The getPlaylistsInfo runs go routines for each playlist
+// and call appendPlaylistInfo which populates plInfo array.
+// Different goroutines are appending the same slice,
+// WaitGroup waits for all goroutines to finish
+func getPlaylistsInfo(service *youtube.Service, part string, playlists []*youtube.Playlist) {
 
+	var wg sync.WaitGroup
+	wg.Add(len(playlists))
+
+	var plInfoArr []string
 	for _, playlist := range playlists {
-		pageToken := ""
-		pCount := 0
-		for {
+		go appendPlaylistInfo(service, part, playlist, &plInfoArr, &wg)
+	}
+	wg.Wait()
 
-			call := service.PlaylistItems.List(part)
-			call = call.PlaylistId(playlist.Id).MaxResults(50)
-			response, err := call.PageToken(pageToken).Do()
-			handleError(err, "")
+	fmt.Println(plInfoArr)
+}
 
-			// increment counter and move to another page of 50 videos
-			pCount += len(response.Items)
-			pageToken = response.NextPageToken
+// The appendPlaylistInfo goes through all videos in playlist (max 50)
+// it uses response.NextPageToken to go to next 50 videos
+// it populates *plInfoArr with new playlist info
+func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist, plInfoArr *[]string, wg *sync.WaitGroup) {
 
-			if pageToken == "" {
-				fmt.Println(playlist.Snippet.Title, ": ", pCount)
-				break
-			}
+	pageToken := ""
+	pCount := 0
+	for {
+		call := service.PlaylistItems.List(part)
+		call = call.PlaylistId(playlist.Id).MaxResults(50)
+		response, err := call.PageToken(pageToken).Do()
+		handleError(err, "")
+
+		// increment counter and move to another page of 50 videos
+		pCount += len(response.Items)
+		pageToken = response.NextPageToken
+
+		if pageToken == "" {
+			*plInfoArr = append(*plInfoArr, playlist.Snippet.Title, ":[", strconv.Itoa(pCount), "]")
+			break
 		}
 	}
+	wg.Done()
 }
 
 func main() {
@@ -76,5 +96,5 @@ func main() {
 
 	getChannelInfo(service, "snippet,contentDetails,statistics", "IvannSerbia")
 	lists := getAllPlaylists(service, "snippet,contentDetails")
-	showPlaylistsInfo(service, "snippet,contentDetails", lists)
+	getPlaylistsInfo(service, "snippet,contentDetails", lists)
 }
