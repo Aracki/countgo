@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -12,6 +13,7 @@ import (
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -98,66 +100,23 @@ func handleError(err error, message string) {
 	}
 }
 
-// channelsListByUsername uses forUsername
-// to get Channel info (id, tittle, totalViews and description)
-func channelsListByUsername(service *youtube.Service, part string, forUsername string) {
-	call := service.Channels.List(part)
-	call = call.ForUsername(forUsername)
-	response, err := call.Do()
-	handleError(err, "")
-	fmt.Println(fmt.Sprintf("This channel's ID is %s. Its title is '%s', "+
-		"and it has %d views. \n",
-		response.Items[0].Id,
-		response.Items[0].Snippet.Title,
-		response.Items[0].Statistics.ViewCount))
-	fmt.Println(response.Items[0].Snippet.Description, "\n")
-}
+// readConfigFile will return oauth2 config
+// based on client_secret.json which is located in project root
+func readConfigFile() *oauth2.Config {
 
-// getAllPlaylists returns all playlist for current user
-func getAllPlaylists(service *youtube.Service, part string) (playlists []*youtube.Playlist) {
+	filePath, _ := filepath.Abs("../client_secret.json")
 
-	call := service.Playlists.List(part)
-	// default maxResults is 5
-	call = call.MaxResults(50).Mine(true)
-	response, err := call.Do()
-	handleError(err, "")
-
-	var lists []*youtube.Playlist
-	for _, item := range response.Items {
-		lists = append(lists, item)
+	b, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("Unable to read client secret file: %v", err)
 	}
 
-	return lists
-}
-
-// showPlaylistInfo uses playlist
-// to return all videos count
-func showPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist) {
-
-	pageToken := ""
-	pCount := 0
-	for {
-
-		call := service.PlaylistItems.List(part)
-		call = call.PlaylistId(playlist.Id).MaxResults(50)
-		response, err := call.PageToken(pageToken).Do()
-		handleError(err, "")
-
-		// increment counter and move to another page of 50 videos
-		pCount += len(response.Items)
-		pageToken = response.NextPageToken
-
-		if pageToken == "" {
-			fmt.Println(playlist.Snippet.Title, ": ", pCount)
-			break
-		}
+	// If modifying these scopes, delete your previously saved credentials
+	// at ~/.credentials/youtube-go-quickstart.json
+	config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
+	if err != nil {
+		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
-}
 
-// for loop through all playlists
-func videosAllPlaylists(service *youtube.Service, part string, playlists []*youtube.Playlist) {
-
-	for _, playlist := range playlists {
-		showPlaylistInfo(service, part, playlist)
-	}
+	return config
 }

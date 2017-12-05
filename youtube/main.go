@@ -2,34 +2,66 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
-	"log"
-	"path/filepath"
+	"fmt"
 
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 	"google.golang.org/api/youtube/v3"
 )
 
-// readConfigFile will return oauth2 config
-// based on client_secret.json which is located in project root
-func readConfigFile() *oauth2.Config {
+// getChannelInfo uses forUsername
+// to get info (id, tittle, totalViews and description)
+func getChannelInfo(service *youtube.Service, part string, forUsername string) {
+	call := service.Channels.List(part)
+	call = call.ForUsername(forUsername)
+	response, err := call.Do()
+	handleError(err, "")
+	fmt.Println(fmt.Sprintf("This channel's ID is %s. Its title is '%s', "+
+		"and it has %d views. \n",
+		response.Items[0].Id,
+		response.Items[0].Snippet.Title,
+		response.Items[0].Statistics.ViewCount))
+	fmt.Println(response.Items[0].Snippet.Description, "\n")
+}
 
-	filePath, _ := filepath.Abs("../client_secret.json")
+// getAllPlaylists returns all playlist for current user
+func getAllPlaylists(service *youtube.Service, part string) (playlists []*youtube.Playlist) {
 
-	b, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
+	call := service.Playlists.List(part)
+	// default maxResults is 5
+	call = call.MaxResults(50).Mine(true)
+	response, err := call.Do()
+	handleError(err, "")
+
+	var lists []*youtube.Playlist
+	for _, item := range response.Items {
+		lists = append(lists, item)
 	}
+	return lists
+}
 
-	// If modifying these scopes, delete your previously saved credentials
-	// at ~/.credentials/youtube-go-quickstart.json
-	config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
+// showPlaylistInfo goes through all playlists
+// and return videos count for each
+func showPlaylistsInfo(service *youtube.Service, part string, playlists []*youtube.Playlist) {
+
+	for _, playlist := range playlists {
+		pageToken := ""
+		pCount := 0
+		for {
+
+			call := service.PlaylistItems.List(part)
+			call = call.PlaylistId(playlist.Id).MaxResults(50)
+			response, err := call.PageToken(pageToken).Do()
+			handleError(err, "")
+
+			// increment counter and move to another page of 50 videos
+			pCount += len(response.Items)
+			pageToken = response.NextPageToken
+
+			if pageToken == "" {
+				fmt.Println(playlist.Snippet.Title, ": ", pCount)
+				break
+			}
+		}
 	}
-
-	return config
 }
 
 func main() {
@@ -42,7 +74,7 @@ func main() {
 
 	handleError(err, "Error creating YouTube client")
 
-	channelsListByUsername(service, "snippet,contentDetails,statistics", "IvannSerbia")
-	l := getAllPlaylists(service, "snippet,contentDetails")
-	videosAllPlaylists(service, "snippet,contentDetails", l)
+	getChannelInfo(service, "snippet,contentDetails,statistics", "IvannSerbia")
+	lists := getAllPlaylists(service, "snippet,contentDetails")
+	showPlaylistsInfo(service, "snippet,contentDetails", lists)
 }
