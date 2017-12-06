@@ -52,7 +52,10 @@ func getPlaylistsInfo(service *youtube.Service, part string, playlists []*youtub
 
 	var plInfoArr []string
 	for _, playlist := range playlists {
-		go appendPlaylistInfo(service, part, playlist, &plInfoArr, &wg)
+		go func(pl *youtube.Playlist) {
+			appendPlaylistInfo(service, part, pl, &plInfoArr)
+			wg.Done()
+		}(playlist)
 	}
 	wg.Wait()
 
@@ -62,7 +65,7 @@ func getPlaylistsInfo(service *youtube.Service, part string, playlists []*youtub
 // The appendPlaylistInfo goes through all videos in playlist (max 50)
 // it uses response.NextPageToken to go to next 50 videos
 // it populates *plInfoArr with new playlist info
-func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist, plInfoArr *[]string, wg *sync.WaitGroup) {
+func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist, plInfoArr *[]string) {
 
 	pageToken := ""
 	pCount := 0
@@ -81,7 +84,6 @@ func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube
 			break
 		}
 	}
-	wg.Done()
 }
 
 func main() {
