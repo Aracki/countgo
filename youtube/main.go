@@ -86,6 +86,54 @@ func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube
 	}
 }
 
+type Video struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	PublishedAt string `json:"publishedAt"`
+	ResourceId  string `json:"title"`
+	Thumbnail   string `json:"title"`
+}
+
+type Videos []Video
+
+// Gets all the videos of specific youtube.Playlist
+func getAllVideos(service *youtube.Service, part string, pl *youtube.Playlist) (videos Videos) {
+
+	var vds Videos
+	pageToken := ""
+
+	for {
+		call := service.PlaylistItems.List(part)
+		call = call.PlaylistId(pl.Id).MaxResults(50)
+		response, err := call.PageToken(pageToken).Do()
+		handleError(err, "")
+
+		// move pageToken to another page
+		pageToken = response.NextPageToken
+
+		for _, item := range response.Items {
+			t := ""
+			if item.Snippet.Thumbnails != nil && item.Snippet.Thumbnails.Medium != nil {
+				t = item.Snippet.Thumbnails.Medium.Url
+			}
+			vds = append(vds, Video{
+				item.Snippet.Title,
+				item.Snippet.Description,
+				item.Snippet.PublishedAt,
+				item.Snippet.ResourceId.VideoId,
+				t,
+			})
+		}
+
+		// if there are no pages
+		if pageToken == "" {
+			break
+		}
+	}
+
+	return vds
+}
+
 func main() {
 	ctx := context.Background()
 
