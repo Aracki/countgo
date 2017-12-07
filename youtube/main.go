@@ -146,13 +146,17 @@ func getAllVideos(service *youtube.Service, part string) (videos []Video) {
 func main() {
 	ctx := context.Background()
 
-	config := client.ReadConfigFile()
+	// reads from config file
+	config, err := client.ReadConfigFile()
+	if err != nil {
+		fmt.Println("Unable to read/parse client secret file", err)
+	}
 
+	// making new client
 	c := client.GetClient(ctx, config)
 	service, err := youtube.New(c)
-
 	if err != nil {
-		fmt.Println("Cannot make youtube client!")
+		fmt.Println("Cannot make youtube client", err)
 	}
 
 	// getting IvannSerbia channel info

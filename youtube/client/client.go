@@ -87,13 +87,14 @@ func handleError(err error, message string) {
 
 // readConfigFile will return oauth2 config
 // based on client_secret.json which is located in project root
-func ReadConfigFile() *oauth2.Config {
+func ReadConfigFile() (*oauth2.Config, error) {
 
 	filePath, _ := filepath.Abs("../client_secret.json")
 
 	b, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
+		return nil, err
 	}
 
 	// If modifying these scopes, delete your previously saved credentials
@@ -101,9 +102,10 @@ func ReadConfigFile() *oauth2.Config {
 	config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
+		return nil, err
 	}
 
-	return config
+	return config, nil
 }
 
 // getClient uses a Context and Config to retrieve a Token
