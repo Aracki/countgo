@@ -18,6 +18,11 @@ type Video struct {
 	Thumbnail   string `json:"title"`
 }
 
+type Playlist struct {
+	Title       string `json:"title"`
+	VideosCount string `json:"videos_count"`
+}
+
 const (
 	snippetContentDetailsStatistics = "snippet,contentDetails,statistics"
 	snippetContentDetails           = "snippet,contentDetails"
@@ -64,16 +69,16 @@ func getPlaylistsInfo(service *youtube.Service, part string, playlists []*youtub
 	var wg sync.WaitGroup
 	wg.Add(len(playlists))
 
-	var plInfoArr []string
+	var pls []Playlist
 	for _, playlist := range playlists {
 		go func(pl *youtube.Playlist) {
-			appendPlaylistInfo(service, part, pl, &plInfoArr)
+			appendPlaylistInfo(service, part, pl, &pls)
 			wg.Done()
 		}(playlist)
 	}
 	wg.Wait()
 
-	fmt.Println(plInfoArr)
+	fmt.Println(pls)
 }
 
 // Gets all the videos of specific youtube.Playlist
