@@ -8,8 +8,6 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-type Videos []Video
-
 type Video struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -82,9 +80,9 @@ func getPlaylistsInfo(service *youtube.Service, part string, playlists []*youtub
 }
 
 // Gets all the videos of specific youtube.Playlist
-func getAllVideos(service *youtube.Service, part string, pl *youtube.Playlist) (videos Videos) {
+func getAllVideosByPlaylist(service *youtube.Service, part string, pl *youtube.Playlist) (videos []Video) {
 
-	var vds Videos
+	var vds []Video
 	pageToken := ""
 
 	for {
@@ -117,6 +115,33 @@ func getAllVideos(service *youtube.Service, part string, pl *youtube.Playlist) (
 	return vds
 }
 
+// Gets all the videos of all playlists of mine
+// goes through all playlists and concurrently appending to vds array of Videos
+func getAllVideos(service *youtube.Service, part string) (videos []Video) {
+
+	var vds []Video
+
+	// get all playlists of mine
+	call := service.Playlists.List(part)
+	call = call.MaxResults(50).Mine(true)
+	response, err := call.Do()
+	handleError(err, "")
+
+	var wg sync.WaitGroup
+	wg.Add(len(response.Items))
+
+	for _, pl := range response.Items {
+		go func(p *youtube.Playlist) {
+			v := getAllVideosByPlaylist(service, part, p)
+			vds = append(vds, v...)
+			wg.Done()
+		}(pl)
+	}
+	wg.Wait()
+
+	return vds
+}
+
 func main() {
 	ctx := context.Background()
 
@@ -134,4 +159,6 @@ func main() {
 	lists := getAllPlaylists(service, snippetContentDetails)
 	// getting all the lists info concurrently
 	getPlaylistsInfo(service, snippetContentDetails, lists)
+	// getting all the videos of all playlists of mine
+	getAllVideos(service, snippetContentDetails)
 }
