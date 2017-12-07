@@ -3,10 +3,24 @@ package main
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"sync"
 
 	"google.golang.org/api/youtube/v3"
+)
+
+type Videos []Video
+
+type Video struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	PublishedAt string `json:"publishedAt"`
+	ResourceId  string `json:"title"`
+	Thumbnail   string `json:"title"`
+}
+
+const (
+	snippetContentDetailsStatistics = "snippet,contentDetails,statistics"
+	snippetContentDetails           = "snippet,contentDetails"
 )
 
 // The getChannelInfo uses forUsername
@@ -62,40 +76,6 @@ func getPlaylistsInfo(service *youtube.Service, part string, playlists []*youtub
 	fmt.Println(plInfoArr)
 }
 
-// The appendPlaylistInfo goes through all videos in playlist (max 50)
-// it uses response.NextPageToken to go to next 50 videos
-// it populates *plInfoArr with new playlist info
-func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist, plInfoArr *[]string) {
-
-	pageToken := ""
-	pCount := 0
-	for {
-		call := service.PlaylistItems.List(part)
-		call = call.PlaylistId(playlist.Id).MaxResults(50)
-		response, err := call.PageToken(pageToken).Do()
-		handleError(err, "")
-
-		// increment counter and move to another page of 50 videos
-		pCount += len(response.Items)
-		pageToken = response.NextPageToken
-
-		if pageToken == "" {
-			*plInfoArr = append(*plInfoArr, playlist.Snippet.Title, ":[", strconv.Itoa(pCount), "]")
-			break
-		}
-	}
-}
-
-type Video struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	PublishedAt string `json:"publishedAt"`
-	ResourceId  string `json:"title"`
-	Thumbnail   string `json:"title"`
-}
-
-type Videos []Video
-
 // Gets all the videos of specific youtube.Playlist
 func getAllVideos(service *youtube.Service, part string, pl *youtube.Playlist) (videos Videos) {
 
@@ -124,13 +104,11 @@ func getAllVideos(service *youtube.Service, part string, pl *youtube.Playlist) (
 				t,
 			})
 		}
-
 		// if there are no pages
 		if pageToken == "" {
 			break
 		}
 	}
-
 	return vds
 }
 
@@ -144,7 +122,11 @@ func main() {
 
 	handleError(err, "Error creating YouTube client")
 
-	getChannelInfo(service, "snippet,contentDetails,statistics", "IvannSerbia")
-	lists := getAllPlaylists(service, "snippet,contentDetails")
-	getPlaylistsInfo(service, "snippet,contentDetails", lists)
+	// getting IvannSerbia channel info
+	getChannelInfo(service, snippetContentDetailsStatistics, "IvannSerbia")
+
+	// getting all the lists
+	lists := getAllPlaylists(service, snippetContentDetails)
+	// getting all the lists info concurrently
+	getPlaylistsInfo(service, snippetContentDetails, lists)
 }
