@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/aracki/countgo/youtube/client"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -145,12 +146,14 @@ func getAllVideos(service *youtube.Service, part string) (videos []Video) {
 func main() {
 	ctx := context.Background()
 
-	config := readConfigFile()
+	config := client.ReadConfigFile()
 
-	client := getClient(ctx, config)
-	service, err := youtube.New(client)
+	c := client.GetClient(ctx, config)
+	service, err := youtube.New(c)
 
-	handleError(err, "Error creating YouTube client")
+	if err != nil {
+		fmt.Println("Cannot make youtube client!")
+	}
 
 	// getting IvannSerbia channel info
 	getChannelInfo(service, snippetContentDetailsStatistics, "IvannSerbia")

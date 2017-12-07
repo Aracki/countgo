@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"encoding/json"
@@ -18,21 +18,6 @@ import (
 )
 
 const missingClientSecretsMessage = `Please configure OAuth 2.0`
-
-// getClient uses a Context and Config to retrieve a Token
-// then generate a Client. It returns the generated Client.
-func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
-	cacheFile, err := tokenCacheFile()
-	if err != nil {
-		log.Fatalf("Unable to get path to cached credential file. %v", err)
-	}
-	tok, err := tokenFromFile(cacheFile)
-	if err != nil {
-		tok = getTokenFromWeb(config)
-		saveToken(cacheFile, tok)
-	}
-	return config.Client(ctx, tok)
-}
 
 // getTokenFromWeb uses Config to request a Token.
 // It returns the retrieved Token.
@@ -102,7 +87,7 @@ func handleError(err error, message string) {
 
 // readConfigFile will return oauth2 config
 // based on client_secret.json which is located in project root
-func readConfigFile() *oauth2.Config {
+func ReadConfigFile() *oauth2.Config {
 
 	filePath, _ := filepath.Abs("../client_secret.json")
 
@@ -119,4 +104,19 @@ func readConfigFile() *oauth2.Config {
 	}
 
 	return config
+}
+
+// getClient uses a Context and Config to retrieve a Token
+// then generate a Client. It returns the generated Client.
+func GetClient(ctx context.Context, config *oauth2.Config) *http.Client {
+	cacheFile, err := tokenCacheFile()
+	if err != nil {
+		log.Fatalf("Unable to get path to cached credential file. %v", err)
+	}
+	tok, err := tokenFromFile(cacheFile)
+	if err != nil {
+		tok = getTokenFromWeb(config)
+		saveToken(cacheFile, tok)
+	}
+	return config.Client(ctx, tok)
 }
