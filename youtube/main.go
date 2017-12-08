@@ -29,41 +29,49 @@ const (
 
 // The getChannelInfo uses forUsername
 // to get info (id, tittle, totalViews and description)
-func getChannelInfo(service *youtube.Service, part string, forUsername string) {
+func ChannelInfo(service *youtube.Service, part string, forUsername string) error {
+
 	call := service.Channels.List(part)
 	call = call.ForUsername(forUsername)
 	response, err := call.Do()
-	handleError(err, "")
+	if err != nil {
+		return err
+	}
+
 	fmt.Println(fmt.Sprintf("This channel's ID is %s. Its title is '%s', "+
 		"and it has %d views. \n",
 		response.Items[0].Id,
 		response.Items[0].Snippet.Title,
 		response.Items[0].Statistics.ViewCount))
 	fmt.Println(response.Items[0].Snippet.Description, "\n")
+
+	return nil
 }
 
-// The getAllPlaylists uses current user
+// The AllPlaylists uses current user
 // maxResult is set to 50 (default is 5)
 // returns all playlists
-func getAllPlaylists(service *youtube.Service, part string) (playlists []*youtube.Playlist) {
+func AllPlaylists(service *youtube.Service, part string) ([]*youtube.Playlist, error) {
 
 	call := service.Playlists.List(part)
 	call = call.MaxResults(50).Mine(true)
 	response, err := call.Do()
-	handleError(err, "")
+	if err != nil {
+		return nil, err
+	}
 
 	var lists []*youtube.Playlist
 	for _, item := range response.Items {
 		lists = append(lists, item)
 	}
-	return lists
+	return lists, nil
 }
 
-// The getPlaylistsInfo runs go routines for each playlist
+// The PlaylistsInfo runs go routines for each playlist
 // and call appendPlaylistInfo which populates plInfo array.
 // Different goroutines are appending the same slice,
 // WaitGroup waits for all goroutines to finish
-func getPlaylistsInfo(service *youtube.Service, part string, playlists []*youtube.Playlist) {
+func PlaylistsInfo(service *youtube.Service, part string, playlists []*youtube.Playlist) ([]Playlist, error) {
 
 	var wg sync.WaitGroup
 	wg.Add(len(playlists))
@@ -77,11 +85,11 @@ func getPlaylistsInfo(service *youtube.Service, part string, playlists []*youtub
 	}
 	wg.Wait()
 
-	fmt.Println(pls)
+	return pls, nil
 }
 
 // Gets all the videos of specific youtube.Playlist
-func getAllVideosByPlaylist(service *youtube.Service, part string, pl *youtube.Playlist) (videos []Video) {
+func AllVideosByPlaylist(service *youtube.Service, part string, pl *youtube.Playlist) ([]Video, error) {
 
 	var vds []Video
 	pageToken := ""
@@ -90,7 +98,9 @@ func getAllVideosByPlaylist(service *youtube.Service, part string, pl *youtube.P
 		call := service.PlaylistItems.List(part)
 		call = call.PlaylistId(pl.Id).MaxResults(50)
 		response, err := call.PageToken(pageToken).Do()
-		handleError(err, "")
+		if err != nil {
+			return nil, err
+		}
 
 		// move pageToken to another page
 		pageToken = response.NextPageToken
@@ -113,12 +123,12 @@ func getAllVideosByPlaylist(service *youtube.Service, part string, pl *youtube.P
 			break
 		}
 	}
-	return vds
+	return vds, nil
 }
 
 // Gets all the videos of all playlists of mine
 // goes through all playlists and concurrently appending to vds array of Videos
-func getAllVideos(service *youtube.Service, part string) (videos []Video) {
+func AllVideos(service *youtube.Service, part string) ([]Video, error) {
 
 	var vds []Video
 
@@ -126,21 +136,23 @@ func getAllVideos(service *youtube.Service, part string) (videos []Video) {
 	call := service.Playlists.List(part)
 	call = call.MaxResults(50).Mine(true)
 	response, err := call.Do()
-	handleError(err, "")
+	if err != nil {
+		return nil, err
+	}
 
 	var wg sync.WaitGroup
 	wg.Add(len(response.Items))
 
 	for _, pl := range response.Items {
 		go func(p *youtube.Playlist) {
-			v := getAllVideosByPlaylist(service, part, p)
+			v, _ := AllVideosByPlaylist(service, part, p)
 			vds = append(vds, v...)
 			wg.Done()
 		}(pl)
 	}
 	wg.Wait()
 
-	return vds
+	return vds, nil
 }
 
 func main() {
@@ -160,12 +172,12 @@ func main() {
 	}
 
 	// getting IvannSerbia channel info
-	getChannelInfo(service, snippetContentDetailsStatistics, "IvannSerbia")
+	ChannelInfo(service, snippetContentDetailsStatistics, "IvannSerbia")
 
 	// getting all the lists
-	lists := getAllPlaylists(service, snippetContentDetails)
+	lists, _ := AllPlaylists(service, snippetContentDetails)
 	// getting all the lists info concurrently
-	getPlaylistsInfo(service, snippetContentDetails, lists)
+	PlaylistsInfo(service, snippetContentDetails, lists)
 	// getting all the videos of all playlists of mine
-	getAllVideos(service, snippetContentDetails)
+	AllVideos(service, snippetContentDetails)
 }

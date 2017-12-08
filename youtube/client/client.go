@@ -76,15 +76,6 @@ func saveToken(file string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func handleError(err error, message string) {
-	if message == "" {
-		message = "Error making API call"
-	}
-	if err != nil {
-		log.Fatalf(message+": %v", err.Error())
-	}
-}
-
 // readConfigFile will return oauth2 config
 // based on client_secret.json which is located in project root
 func ReadConfigFile() (*oauth2.Config, error) {

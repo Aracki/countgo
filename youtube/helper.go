@@ -9,7 +9,7 @@ import (
 // The appendPlaylistInfo goes through all videos in playlist (max 50)
 // it uses response.NextPageToken to go to next 50 videos
 // it populates *plInfoArr with new playlist info
-func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist, plInfoArr *[]Playlist) {
+func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist, plInfoArr *[]Playlist) error {
 
 	pageToken := ""
 	pCount := 0
@@ -17,18 +17,19 @@ func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube
 		call := service.PlaylistItems.List(part)
 		call = call.PlaylistId(playlist.Id).MaxResults(50)
 		response, err := call.PageToken(pageToken).Do()
-		handleError(err, "")
+		if err != nil {
+			return err
+		}
 
 		// increment counter and move to another page of 50 videos
 		pCount += len(response.Items)
 		pageToken = response.NextPageToken
 
 		if pageToken == "" {
-			*plInfoArr = append(*plInfoArr, Playlist{
-				playlist.Snippet.Title,
-				strconv.Itoa(pCount),
-			})
+			// append total count to plInfoArr
+			*plInfoArr = append(*plInfoArr, Playlist{playlist.Snippet.Title, strconv.Itoa(pCount)})
 			break
 		}
 	}
+	return nil
 }
