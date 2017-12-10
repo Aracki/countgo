@@ -17,6 +17,8 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+const missingClientSecretsMessage = `Please configure OAuth 2.0`
+
 // getTokenFromWeb uses Config to request a Token.
 // It returns the retrieved Token.
 func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
@@ -78,7 +80,7 @@ func saveToken(file string, token *oauth2.Token) {
 // based on client_secret.json which is located in project root
 func ReadConfigFile() (*oauth2.Config, error) {
 
-	filePath, _ := filepath.Abs("../client_secret.json")
+	filePath, _ := filepath.Abs("../../client_secret.json")
 
 	b, err := ioutil.ReadFile(filePath)
 	if err != nil {

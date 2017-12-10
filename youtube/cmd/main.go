@@ -1,12 +1,8 @@
 package main
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/aracki/countgo/youtube/client"
+	"github.com/aracki/countgo/youtube"
 	"github.com/aracki/countgo/youtube/service"
-	"google.golang.org/api/youtube/v3"
 )
 
 const (
@@ -15,20 +11,9 @@ const (
 )
 
 func main() {
-	ctx := context.Background()
 
-	// reads from config file
-	config, err := client.ReadConfigFile()
-	if err != nil {
-		fmt.Println("Unable to read/parse client secret file", err)
-	}
-
-	// making new client
-	c := client.GetClient(ctx, config)
-	s, err := youtube.New(c)
-	if err != nil {
-		fmt.Println("Cannot make youtube client", err)
-	}
+	// init youtube service
+	s, _ := youtube.InitYoutubeService()
 
 	// getting IvannSerbia channel info
 	service.ChannelInfo(s, snippetContentDetailsStatistics, "IvannSerbia")
