@@ -18,23 +18,43 @@ import (
 
 var mdb *db.Database
 
-func main() {
+// custom logging func
+func logg(message string) {
 
-	fmt.Println("Application started...")
+	f, err := os.OpenFile(os.Getenv("GOPATH")+"/visitors.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		fmt.Printf("Error opening file: %v", err)
+	}
+	defer f.Close()
+	log.SetOutput(f)
 
-	readConfig()
-	startCounter()
+	// print message to file
+	log.Println(message)
 }
 
-func startCounter() {
-	logg("Counter started...")
+func readConfig() {
 
-	http.Handle("/count", http.HandlerFunc(counter))
-	http.Handle("/aggr", http.HandlerFunc(aggr))
-	err := http.ListenAndServe(":7777", nil)
-	if err != nil {
-		logg(err.Error())
+	var configPath string
+
+	// read -config flag
+	flag.StringVar(&configPath, "config", "", "provide config path")
+	flag.Parse()
+	if configPath == "" {
+		configPath = "/etc/countgo/config.yml"
 	}
+
+	// read config file
+	config, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// init mdb with config
+	var c db.Conf
+	if err := yaml.Unmarshal(config, &c); err != nil {
+		log.Fatalln(err)
+	}
+	mdb = db.NewDb(c)
 }
 
 func aggr(w http.ResponseWriter, r *http.Request) {
@@ -75,41 +95,21 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(strconv.Itoa(len(updatedUniqueVisitors))))
 }
 
-// custom logging func
-func logg(message string) {
+func startCounter() {
+	logg("Counter started...")
 
-	f, err := os.OpenFile(os.Getenv("GOPATH")+"/visitors.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	http.Handle("/count", http.HandlerFunc(counter))
+	http.Handle("/aggr", http.HandlerFunc(aggr))
+	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
-		fmt.Printf("Error opening file: %v", err)
+		logg(err.Error())
 	}
-	defer f.Close()
-	log.SetOutput(f)
-
-	// print message to file
-	log.Println(message)
 }
 
-func readConfig() {
+func main() {
 
-	var configPath string
+	fmt.Println("Application started...")
 
-	// read -config flag
-	flag.StringVar(&configPath, "config", "", "provide config path")
-	flag.Parse()
-	if configPath == "" {
-		configPath = "/etc/countgo/config.yml"
-	}
-
-	// read config file
-	config, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	// init mdb with config
-	var c db.Conf
-	if err := yaml.Unmarshal(config, &c); err != nil {
-		log.Fatalln(err)
-	}
-	mdb = db.NewDb(c)
+	readConfig()
+	startCounter()
 }
