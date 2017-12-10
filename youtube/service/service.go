@@ -7,6 +7,11 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+const (
+	snippetContentDetailsStatistics = "snippet,contentDetails,statistics"
+	snippetContentDetails           = "snippet,contentDetails"
+)
+
 type Video struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -22,9 +27,9 @@ type Playlist struct {
 
 // The getChannelInfo uses forUsername
 // to get info (id, tittle, totalViews and description)
-func ChannelInfo(service *youtube.Service, part string, forUsername string) error {
+func ChannelInfo(service *youtube.Service, forUsername string) error {
 
-	call := service.Channels.List(part)
+	call := service.Channels.List(snippetContentDetailsStatistics)
 	call = call.ForUsername(forUsername)
 	response, err := call.Do()
 	if err != nil {
@@ -44,9 +49,9 @@ func ChannelInfo(service *youtube.Service, part string, forUsername string) erro
 // The AllPlaylists uses current user
 // maxResult is set to 50 (default is 5)
 // returns all playlists
-func AllPlaylists(service *youtube.Service, part string) ([]*youtube.Playlist, error) {
+func AllPlaylists(service *youtube.Service) ([]*youtube.Playlist, error) {
 
-	call := service.Playlists.List(part)
+	call := service.Playlists.List(snippetContentDetails)
 	call = call.MaxResults(50).Mine(true)
 	response, err := call.Do()
 	if err != nil {
@@ -64,7 +69,7 @@ func AllPlaylists(service *youtube.Service, part string) ([]*youtube.Playlist, e
 // and call appendPlaylistInfo which populates plInfo array.
 // Different goroutines are appending the same slice,
 // WaitGroup waits for all goroutines to finish
-func PlaylistsInfo(service *youtube.Service, part string, playlists []*youtube.Playlist) ([]Playlist, error) {
+func PlaylistsInfo(service *youtube.Service, playlists []*youtube.Playlist) ([]Playlist, error) {
 
 	var wg sync.WaitGroup
 	wg.Add(len(playlists))
@@ -72,7 +77,7 @@ func PlaylistsInfo(service *youtube.Service, part string, playlists []*youtube.P
 	var pls []Playlist
 	for _, playlist := range playlists {
 		go func(pl *youtube.Playlist) {
-			appendPlaylistInfo(service, part, pl, &pls)
+			appendPlaylistInfo(service, snippetContentDetails, pl, &pls)
 			wg.Done()
 		}(playlist)
 	}
@@ -82,13 +87,13 @@ func PlaylistsInfo(service *youtube.Service, part string, playlists []*youtube.P
 }
 
 // Gets all the videos of specific youtube.Playlist
-func AllVideosByPlaylist(service *youtube.Service, part string, pl *youtube.Playlist) ([]Video, error) {
+func AllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]Video, error) {
 
 	var vds []Video
 	pageToken := ""
 
 	for {
-		call := service.PlaylistItems.List(part)
+		call := service.PlaylistItems.List(snippetContentDetails)
 		call = call.PlaylistId(pl.Id).MaxResults(50)
 		response, err := call.PageToken(pageToken).Do()
 		if err != nil {
@@ -121,12 +126,12 @@ func AllVideosByPlaylist(service *youtube.Service, part string, pl *youtube.Play
 
 // Gets all the videos of all playlists of mine
 // goes through all playlists and concurrently appending to vds array of Videos
-func AllVideos(service *youtube.Service, part string) ([]Video, error) {
+func AllVideos(service *youtube.Service) ([]Video, error) {
 
 	var vds []Video
 
 	// get all playlists of mine
-	call := service.Playlists.List(part)
+	call := service.Playlists.List(snippetContentDetails)
 	call = call.MaxResults(50).Mine(true)
 	response, err := call.Do()
 	if err != nil {
@@ -138,7 +143,7 @@ func AllVideos(service *youtube.Service, part string) ([]Video, error) {
 
 	for _, pl := range response.Items {
 		go func(p *youtube.Playlist) {
-			v, _ := AllVideosByPlaylist(service, part, p)
+			v, _ := AllVideosByPlaylist(service, p)
 			vds = append(vds, v...)
 			wg.Done()
 		}(pl)
