@@ -27,23 +27,25 @@ type Playlist struct {
 
 // The getChannelInfo uses forUsername
 // to get info (id, tittle, totalViews and description)
-func ChannelInfo(service *youtube.Service, forUsername string) error {
+func ChannelInfo(service *youtube.Service, forUsername string) (string, error) {
 
 	call := service.Channels.List(snippetContentDetailsStatistics)
 	call = call.ForUsername(forUsername)
 	response, err := call.Do()
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	fmt.Println(fmt.Sprintf("This channel's ID is %s. Its title is '%s', "+
+	var info string
+
+	info = fmt.Sprintf("This channel's ID is %s. Its title is '%s', "+
 		"and it has %d views. \n",
 		response.Items[0].Id,
 		response.Items[0].Snippet.Title,
-		response.Items[0].Statistics.ViewCount))
-	fmt.Println(response.Items[0].Snippet.Description, "\n")
+		response.Items[0].Statistics.ViewCount)
+	info += fmt.Sprintf(response.Items[0].Snippet.Description)
 
-	return nil
+	return info, nil
 }
 
 // The AllPlaylists uses current user
