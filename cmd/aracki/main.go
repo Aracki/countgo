@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/aracki/countgo/db"
+	"github.com/aracki/countgo/youtube"
+	"github.com/aracki/countgo/youtube/service"
 	"github.com/tomasen/realip"
 	"gopkg.in/yaml.v2"
 )
@@ -95,11 +97,31 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(strconv.Itoa(len(updatedUniqueVisitors))))
 }
 
+func channelDescription(w http.ResponseWriter, r *http.Request) {
+
+	// fix CORS problem
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	// call service
+	s, err := youtube.InitYoutubeService()
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	info, err := service.ChannelInfo(s, "IvannSerbia")
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	w.Write([]byte(info))
+}
+
 func startCounter() {
 	logg("Counter started...")
 
 	http.Handle("/count", http.HandlerFunc(counter))
 	http.Handle("/aggr", http.HandlerFunc(aggr))
+	http.Handle("/channelDescription", http.HandlerFunc(channelDescription))
 	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
 		logg(err.Error())
