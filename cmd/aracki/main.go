@@ -60,8 +60,6 @@ func readConfig() {
 }
 
 func aggr(w http.ResponseWriter, r *http.Request) {
-	// fix CORS problem
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	uniqueVisitors, err := mdb.GetMostFrequentVisitors()
 	if err != nil {
@@ -73,8 +71,6 @@ func aggr(w http.ResponseWriter, r *http.Request) {
 }
 
 func counter(w http.ResponseWriter, r *http.Request) {
-	// fix CORS problem
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// get distinct public ip visitors from mongodb
 	uniqueVisitors, err := mdb.GetDistinctPublicIPs()
@@ -99,9 +95,6 @@ func counter(w http.ResponseWriter, r *http.Request) {
 
 func channelDescription(w http.ResponseWriter, r *http.Request) {
 
-	// fix CORS problem
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
 	// call service
 	s, err := youtube.InitYoutubeService()
 	if err != nil {
@@ -116,12 +109,21 @@ func channelDescription(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(info))
 }
 
+func handlerWrapper(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// fix CORS problem
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		h.ServeHTTP(w, r)
+	})
+}
+
 func startCounter() {
 	logg("Counter started...")
 
-	http.Handle("/count", http.HandlerFunc(counter))
-	http.Handle("/aggr", http.HandlerFunc(aggr))
-	http.Handle("/channelDescription", http.HandlerFunc(channelDescription))
+	http.Handle("/count", handlerWrapper(http.HandlerFunc(counter)))
+	http.Handle("/aggr", handlerWrapper(http.HandlerFunc(aggr)))
+	http.Handle("/channelDescription", handlerWrapper(http.HandlerFunc(channelDescription)))
 	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
 		logg(err.Error())
