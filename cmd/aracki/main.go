@@ -135,6 +135,27 @@ func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(jsn))
 }
 
+func allVideos(w http.ResponseWriter, r *http.Request) {
+
+	// init service
+	s, err := youtube.InitYoutubeService()
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	vds, err := service.AllVideos(s)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	jsn, err := json.Marshal(vds)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	w.Write([]byte(jsn))
+}
+
 func startCounter() {
 	logg("Counter started...")
 
@@ -142,6 +163,8 @@ func startCounter() {
 	http.Handle("/aggr", handlerWrapper(http.HandlerFunc(aggr)))
 	http.Handle("/channelDescription", handlerWrapper(http.HandlerFunc(channelDescription)))
 	http.Handle("/plInfo", handlerWrapper(http.HandlerFunc(playlistsInfo)))
+	http.Handle("/allVideos", handlerWrapper(http.HandlerFunc(allVideos)))
+
 	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
 		logg(err.Error())
