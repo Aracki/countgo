@@ -59,13 +59,20 @@ func readConfig() {
 	mdb = db.NewDb(c)
 }
 
+func handlerWrapper(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// fix CORS problem
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		h.ServeHTTP(w, r)
+	})
+}
+
 func aggr(w http.ResponseWriter, r *http.Request) {
 
 	uniqueVisitors, err := mdb.GetMostFrequentVisitors()
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	jsonResponse, err := json.Marshal(uniqueVisitors)
 	w.Write(jsonResponse)
 }
@@ -89,13 +96,12 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Write([]byte("Cannot speak with mongodb"))
 	}
-
 	w.Write([]byte(strconv.Itoa(len(updatedUniqueVisitors))))
 }
 
 func channelDescription(w http.ResponseWriter, r *http.Request) {
 
-	// call service
+	// init service
 	s, err := youtube.InitYoutubeService()
 	if err != nil {
 		w.Write([]byte(err.Error()))
@@ -105,17 +111,28 @@ func channelDescription(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
-
 	w.Write([]byte(info))
 }
 
-func handlerWrapper(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// fix CORS problem
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 
-		h.ServeHTTP(w, r)
-	})
+	// init service
+	s, err := youtube.InitYoutubeService()
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	pls, err := service.AllPlaylists(s)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	jsn, err := json.Marshal(pls)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	w.Write([]byte(jsn))
 }
 
 func startCounter() {
@@ -124,6 +141,7 @@ func startCounter() {
 	http.Handle("/count", handlerWrapper(http.HandlerFunc(counter)))
 	http.Handle("/aggr", handlerWrapper(http.HandlerFunc(aggr)))
 	http.Handle("/channelDescription", handlerWrapper(http.HandlerFunc(channelDescription)))
+	http.Handle("/plInfo", handlerWrapper(http.HandlerFunc(playlistsInfo)))
 	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
 		logg(err.Error())
