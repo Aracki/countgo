@@ -12,19 +12,6 @@ const (
 	snippetContentDetails           = "snippet,contentDetails"
 )
 
-type Video struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	PublishedAt string `json:"publishedAt"`
-	ResourceId  string `json:"title"`
-	Thumbnail   string `json:"title"`
-}
-
-type Playlist struct {
-	Title       string `json:"title"`
-	VideosCount string `json:"videos_count"`
-}
-
 // The getChannelInfo uses forUsername
 // to get info (id, tittle, totalViews and description)
 func ChannelInfo(service *youtube.Service, forUsername string) (string, error) {
