@@ -16,10 +16,11 @@ func main() {
 	info, _ := service.ChannelInfo(s, "IvannSerbia")
 	fmt.Println(info)
 
-	// getting all the lists
-	lists, _ := service.AllPlaylists(s)
 	// getting all the lists info concurrently
-	service.PlaylistsInfo(s, lists)
+	lists, _ := service.AllPlaylists(s)
+	for _, v := range lists {
+		fmt.Printf("%+v", v)
+	}
 	// getting all the videos of all playlists of mine
 	service.AllVideos(s)
 }
