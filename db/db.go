@@ -20,11 +20,6 @@ type Conf struct {
 	Password string `yaml:"password"`
 }
 
-func NewDb(c Conf) *Database {
-	mgoSession = initMgoSession(c)
-	return &Database{c}
-}
-
 func initMgoSession(c Conf) *mgo.Session {
 	if mgoSession == nil {
 		var err error
@@ -41,4 +36,9 @@ func initMgoSession(c Conf) *mgo.Session {
 		}
 	}
 	return mgoSession.Clone()
+}
+
+func NewDb(c Conf) *Database {
+	mgoSession = initMgoSession(c)
+	return &Database{c}
 }

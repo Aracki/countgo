@@ -1,24 +1,18 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
-	"strconv"
-	"time"
 
+	"github.com/aracki/countgo/controllers"
 	"github.com/aracki/countgo/db"
 	"github.com/aracki/countgo/youtube"
-	"github.com/aracki/countgo/youtube/service"
-	"github.com/tomasen/realip"
+	youtube2 "google.golang.org/api/youtube/v3"
 	"gopkg.in/yaml.v2"
 )
-
-var mdb *db.Database
 
 // custom logging func
 func logg(message string) {
@@ -34,7 +28,7 @@ func logg(message string) {
 	log.Println(message)
 }
 
-func readConfig() {
+func initDB() *db.Database {
 
 	var configPath string
 
@@ -56,125 +50,25 @@ func readConfig() {
 	if err := yaml.Unmarshal(config, &c); err != nil {
 		log.Fatalln(err)
 	}
-	mdb = db.NewDb(c)
+
+	return db.NewDb(c)
 }
 
-func handlerWrapper(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// fix CORS problem
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		h.ServeHTTP(w, r)
-	})
-}
+func initYT() (*youtube2.Service, error) {
 
-func aggr(w http.ResponseWriter, r *http.Request) {
-
-	uniqueVisitors, err := mdb.GetMostFrequentVisitors()
+	yts, err := youtube.InitYoutubeService()
 	if err != nil {
-		log.Fatal(err)
-	}
-	jsonResponse, err := json.Marshal(uniqueVisitors)
-	w.Write(jsonResponse)
-}
-
-func counter(w http.ResponseWriter, r *http.Request) {
-
-	// get distinct public ip visitors from mongodb
-	uniqueVisitors, err := mdb.GetDistinctPublicIPs()
-	if err != nil {
-		w.Write([]byte("Cannot speak with mongodb"))
-	}
-	logg("Unique visitors: " + strconv.Itoa(len(uniqueVisitors)))
-
-	// insert visitor into db
-	logg("Inserting visitor with " + realip.RealIP(r) +
-		" IP on date " + time.Now().String())
-	mdb.InsertVisitor(r)
-
-	// again call mongodb for distinct visitors
-	updatedUniqueVisitors, err := mdb.GetDistinctPublicIPs()
-	if err != nil {
-		w.Write([]byte("Cannot speak with mongodb"))
-	}
-	w.Write([]byte(strconv.Itoa(len(updatedUniqueVisitors))))
-}
-
-func channelDescription(w http.ResponseWriter, r *http.Request) {
-
-	// init service
-	s, err := youtube.InitYoutubeService()
-	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-
-	info, err := service.ChannelInfo(s, "IvannSerbia")
-	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-	w.Write([]byte(info))
-}
-
-func playlistsInfo(w http.ResponseWriter, r *http.Request) {
-
-	// init service
-	s, err := youtube.InitYoutubeService()
-	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-
-	pls, err := service.AllPlaylists(s)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-
-	jsn, err := json.Marshal(pls)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-
-	w.Write([]byte(jsn))
-}
-
-func allVideos(w http.ResponseWriter, r *http.Request) {
-
-	// init service
-	s, err := youtube.InitYoutubeService()
-	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-
-	vds, err := service.AllVideos(s)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-
-	jsn, err := json.Marshal(vds)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-
-	w.Write([]byte(jsn))
-}
-
-func startCounter() {
-	logg("Counter started...")
-
-	http.Handle("/count", handlerWrapper(http.HandlerFunc(counter)))
-	http.Handle("/aggr", handlerWrapper(http.HandlerFunc(aggr)))
-	http.Handle("/channelDescription", handlerWrapper(http.HandlerFunc(channelDescription)))
-	http.Handle("/plInfo", handlerWrapper(http.HandlerFunc(playlistsInfo)))
-	http.Handle("/allVideos", handlerWrapper(http.HandlerFunc(allVideos)))
-
-	err := http.ListenAndServe(":7777", nil)
-	if err != nil {
-		logg(err.Error())
+		fmt.Println("Cannot init youtube service")
+		return nil, err
+	} else {
+		return yts, nil
 	}
 }
 
 func main() {
-
 	fmt.Println("Application started...")
 
-	readConfig()
-	startCounter()
+	mdb := initDB()
+	yts, _ := initYT()
+	controllers.StartHandlers(mdb, yts)
 }
