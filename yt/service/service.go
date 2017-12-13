@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/aracki/countgo/models"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -40,7 +41,7 @@ func ChannelInfo(service *youtube.Service, forUsername string) (string, error) {
 // and call appendPlaylistInfo which populates plInfo array.
 // Different goroutines are appending the same slice;
 // WaitGroup waits for all goroutines to finish
-func AllPlaylists(service *youtube.Service) ([]Playlist, error) {
+func AllPlaylists(service *youtube.Service) ([]models.Playlist, error) {
 
 	// get all playlists
 	call := service.Playlists.List(snippetContentDetails)
@@ -53,7 +54,7 @@ func AllPlaylists(service *youtube.Service) ([]Playlist, error) {
 	var wg sync.WaitGroup
 	wg.Add(len(response.Items))
 
-	var pls []Playlist
+	var pls []models.Playlist
 	for _, pl := range response.Items {
 		go func(p *youtube.Playlist) {
 			appendPlaylistInfo(service, snippetContentDetails, p, &pls)
@@ -66,9 +67,9 @@ func AllPlaylists(service *youtube.Service) ([]Playlist, error) {
 }
 
 // Gets all the videos of specific youtube.Playlist
-func AllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]Video, error) {
+func AllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]models.Video, error) {
 
-	var vds []Video
+	var vds []models.Video
 	pageToken := ""
 
 	for {
@@ -87,12 +88,12 @@ func AllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]Vide
 			if item.Snippet.Thumbnails != nil && item.Snippet.Thumbnails.Medium != nil {
 				t = item.Snippet.Thumbnails.Medium.Url
 			}
-			vds = append(vds, Video{
-				item.Snippet.Title,
-				item.Snippet.Description,
-				item.Snippet.PublishedAt,
-				item.Snippet.ResourceId.VideoId,
-				t,
+			vds = append(vds, models.Video{
+				Title:       item.Snippet.Title,
+				Description: item.Snippet.Description,
+				PublishedAt: item.Snippet.PublishedAt,
+				ResourceId:  item.Snippet.ResourceId.VideoId,
+				Thumbnail:   t,
 			})
 		}
 		// if there are no pages
@@ -105,9 +106,9 @@ func AllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]Vide
 
 // Gets all the videos of all playlists of mine
 // goes through all playlists and concurrently appending to vds array of Videos
-func AllVideos(service *youtube.Service) ([]Video, error) {
+func AllVideos(service *youtube.Service) ([]models.Video, error) {
 
-	var vds []Video
+	var vds []models.Video
 
 	// get all playlists of mine
 	call := service.Playlists.List(snippetContentDetails)

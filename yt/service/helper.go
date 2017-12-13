@@ -3,13 +3,14 @@ package service
 import (
 	"strconv"
 
+	"github.com/aracki/countgo/models"
 	"google.golang.org/api/youtube/v3"
 )
 
 // The appendPlaylistInfo goes through all videos in playlist (max 50)
 // it uses response.NextPageToken to go to next 50 videos
 // it populates *plInfoArr with new playlist info
-func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist, plInfoArr *[]Playlist) error {
+func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube.Playlist, plInfoArr *[]models.Playlist) error {
 
 	pageToken := ""
 	pCount := 0
@@ -27,7 +28,10 @@ func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube
 
 		if pageToken == "" {
 			// append total count to plInfoArr
-			*plInfoArr = append(*plInfoArr, Playlist{playlist.Snippet.Title, strconv.Itoa(pCount)})
+			*plInfoArr = append(*plInfoArr, models.Playlist{
+				Title:       playlist.Snippet.Title,
+				VideosCount: strconv.Itoa(pCount),
+			})
 			break
 		}
 	}
