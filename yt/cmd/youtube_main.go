@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/aracki/countgo/youtube"
 	"github.com/aracki/countgo/youtube/service"
+	"github.com/aracki/countgo/yt"
 )
 
 func main() {
 
 	// init youtube service
-	s, _ := youtube.InitYoutubeService()
+	s, _ := yt.InitYoutubeService()
 
 	// getting IvannSerbia channel info
 	info, _ := service.ChannelInfo(s, "IvannSerbia")

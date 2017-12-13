@@ -9,8 +9,8 @@ import (
 
 	"github.com/aracki/countgo/controllers"
 	"github.com/aracki/countgo/db"
-	"github.com/aracki/countgo/youtube"
-	youtube2 "google.golang.org/api/youtube/v3"
+	"github.com/aracki/countgo/yt"
+	"google.golang.org/api/youtube/v3"
 	"gopkg.in/yaml.v2"
 )
 
@@ -32,7 +32,7 @@ func initDB() *db.Database {
 
 	var configPath string
 
-	// read -config flag
+	// read -config flag or find it in /etc/
 	flag.StringVar(&configPath, "config", "", "provide config path")
 	flag.Parse()
 	if configPath == "" {
@@ -54,9 +54,9 @@ func initDB() *db.Database {
 	return db.NewDb(c)
 }
 
-func initYT() (*youtube2.Service, error) {
+func initYT() (*youtube.Service, error) {
 
-	yts, err := youtube.InitYoutubeService()
+	yts, err := yt.InitYoutubeService()
 	if err != nil {
 		fmt.Println("Cannot init youtube service")
 		return nil, err

@@ -1,10 +1,10 @@
-package youtube
+package yt
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/aracki/countgo/youtube/client"
+	"github.com/aracki/countgo/yt/client"
 	"google.golang.org/api/youtube/v3"
 )
 
