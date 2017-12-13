@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/aracki/countgo/youtube/service"
 	"github.com/aracki/countgo/yt"
+	"github.com/aracki/countgo/yt/service"
 )
 
 func main() {
