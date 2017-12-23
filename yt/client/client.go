@@ -78,9 +78,9 @@ func saveToken(file string, token *oauth2.Token) {
 
 // readConfigFile will return oauth2 config
 // based on client_secret.json which is located in project root
-func ReadConfigFile() (*oauth2.Config, error) {
+func ReadConfigFile(path string) (*oauth2.Config, error) {
 
-	filePath, _ := filepath.Abs("/etc/youtube/client_secret.json")
+	filePath, _ := filepath.Abs(path)
 
 	b, err := ioutil.ReadFile(filePath)
 	if err != nil {

@@ -8,6 +8,8 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+const clientSecretPath = "/etc/youtube/client_secret.json"
+
 // InitYoutubeService will read from config file
 // than make youtube client and service according to that client
 // returns pointer to youtube.Service
@@ -15,7 +17,7 @@ func InitYoutubeService() (*youtube.Service, error) {
 	ctx := context.Background()
 
 	// reads from config file
-	config, err := client.ReadConfigFile()
+	config, err := client.ReadConfigFile(clientSecretPath)
 	if err != nil {
 		fmt.Println("Unable to read/parse client secret file", err)
 	}
