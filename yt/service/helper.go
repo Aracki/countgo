@@ -29,6 +29,7 @@ func appendPlaylistInfo(service *youtube.Service, part string, playlist *youtube
 		if pageToken == "" {
 			// append total count to plInfoArr
 			*plInfoArr = append(*plInfoArr, models.Playlist{
+				Id:          playlist.Id,
 				Title:       playlist.Snippet.Title,
 				VideosCount: strconv.Itoa(pCount),
 			})
