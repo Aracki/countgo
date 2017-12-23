@@ -22,5 +22,5 @@ func main() {
 		fmt.Printf("%+v", v)
 	}
 	// getting all the videos of all playlists of mine
-	service.AllVideos(s)
+	service.Videos(s)
 }

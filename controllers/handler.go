@@ -59,7 +59,7 @@ func channelDescription(w http.ResponseWriter, r *http.Request) {
 
 func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 
-	pls, err := service.AllPlaylists(yt)
+	pls, err := service.Playlists(yt)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
@@ -74,7 +74,7 @@ func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 
 func allVideos(w http.ResponseWriter, r *http.Request) {
 
-	vds, err := service.AllVideos(yt)
+	vds, err := service.Videos(yt)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}

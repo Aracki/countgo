@@ -36,14 +36,36 @@ func ChannelInfo(service *youtube.Service, forUsername string) (string, error) {
 	return info, nil
 }
 
-// The AllPlaylists uses current user - maxResult is set to 50 (default is 5)
-// It runs go routines for each playlist
-// and call appendPlaylistInfo which populates plInfo array.
-// Different goroutines are appending the same slice;
-// WaitGroup waits for all goroutines to finish
-func AllPlaylists(service *youtube.Service) ([]models.Playlist, error) {
+// Gets all playlists of current user - maxResult is set to 50 (default is 5)
+// returns array of all playlists (id, name, count)
+func Playlists(service *youtube.Service) ([]models.Playlist, error) {
 
 	// get all playlists
+	call := service.Playlists.List(snippetContentDetails)
+	call = call.MaxResults(50).Mine(true)
+	response, err := call.Do()
+	if err != nil {
+		return nil, err
+	}
+
+	var pls []models.Playlist
+	for _, pl := range response.Items {
+		pls = append(pls, models.Playlist{
+			Id:          pl.Id,
+			Title:       pl.Snippet.Title,
+			VideosCount: int(pl.ContentDetails.ItemCount),
+		})
+	}
+
+	return pls, nil
+}
+
+// Gets all the videos of all playlists of mine
+// Different goroutines are appending the same vds slice;
+// WaitGroup waits for all goroutines to finish
+func Videos(service *youtube.Service) (vds []models.Video, err error) {
+
+	// get all playlists of mine
 	call := service.Playlists.List(snippetContentDetails)
 	call = call.MaxResults(50).Mine(true)
 	response, err := call.Do()
@@ -54,16 +76,16 @@ func AllPlaylists(service *youtube.Service) ([]models.Playlist, error) {
 	var wg sync.WaitGroup
 	wg.Add(len(response.Items))
 
-	var pls []models.Playlist
 	for _, pl := range response.Items {
 		go func(p *youtube.Playlist) {
-			appendPlaylistInfo(service, snippetContentDetails, p, &pls)
+			v, _ := AllVideosByPlaylist(service, p)
+			vds = append(vds, v...)
 			wg.Done()
 		}(pl)
 	}
 	wg.Wait()
 
-	return pls, nil
+	return vds, nil
 }
 
 // Gets all the videos of specific youtube.Playlist
@@ -101,34 +123,5 @@ func AllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]mode
 			break
 		}
 	}
-	return vds, nil
-}
-
-// Gets all the videos of all playlists of mine
-// goes through all playlists and concurrently appending to vds array of Videos
-func AllVideos(service *youtube.Service) ([]models.Video, error) {
-
-	var vds []models.Video
-
-	// get all playlists of mine
-	call := service.Playlists.List(snippetContentDetails)
-	call = call.MaxResults(50).Mine(true)
-	response, err := call.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	var wg sync.WaitGroup
-	wg.Add(len(response.Items))
-
-	for _, pl := range response.Items {
-		go func(p *youtube.Playlist) {
-			v, _ := AllVideosByPlaylist(service, p)
-			vds = append(vds, v...)
-			wg.Done()
-		}(pl)
-	}
-	wg.Wait()
-
 	return vds, nil
 }
