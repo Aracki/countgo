@@ -68,7 +68,15 @@ func initYT() (*youtube.Service, error) {
 func main() {
 	fmt.Println("Application started...")
 
-	mdb := initDB()
+	var mongo bool
+	flag.BoolVar(&mongo, "m", false, "use mongo?")
+	flag.Parse()
+
+	var mdb *db.Database
+	if mongo {
+		mdb = initDB()
+	}
+
 	yts, _ := initYT()
 	controllers.StartHandlers(mdb, yts)
 }
