@@ -22,15 +22,7 @@ import (
 var mdb *db.Database
 var yt *youtube.Service
 
-func handlerWrapper(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// fix CORS problem
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		h.ServeHTTP(w, r)
-	})
-}
-
-func aggr(w http.ResponseWriter, r *http.Request) {
+func mostFrequentVisitors(w http.ResponseWriter, r *http.Request) {
 
 	uniqueVisitors, err := mdb.GetMostFrequentVisitors()
 	if err != nil {
@@ -72,7 +64,7 @@ func channelDescription(w http.ResponseWriter, r *http.Request) {
 
 func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 
-	pls, err := service.Playlists(yt)
+	pls, err := service.GetAllPlaylists(yt)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
@@ -87,7 +79,7 @@ func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 
 func allVideos(w http.ResponseWriter, r *http.Request) {
 
-	vds, err := service.Videos(yt)
+	vds, err := service.GetAllVideos(yt)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
@@ -115,26 +107,5 @@ func saveFile(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 	} else {
 		os.Remove(file.TempFileName)
-	}
-}
-
-func StartHandlers(db *db.Database, yts *youtube.Service) {
-	fmt.Println("Handlers started...")
-
-	// set database pointer
-	mdb = db
-	// set youtube service
-	yt = yts
-
-	http.Handle("/count", handlerWrapper(http.HandlerFunc(counter)))
-	http.Handle("/aggr", handlerWrapper(http.HandlerFunc(aggr)))
-	http.Handle("/channelDescription", handlerWrapper(http.HandlerFunc(channelDescription)))
-	http.Handle("/plInfo", handlerWrapper(http.HandlerFunc(playlistsInfo)))
-	http.Handle("/allVideos", handlerWrapper(http.HandlerFunc(allVideos)))
-	http.Handle("/saveFile", handlerWrapper(http.HandlerFunc(saveFile)))
-
-	err := http.ListenAndServe(":7777", nil)
-	if err != nil {
-		log.Fatal(err)
 	}
 }

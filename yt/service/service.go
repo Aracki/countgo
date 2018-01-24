@@ -38,7 +38,7 @@ func ChannelInfo(service *youtube.Service, forUsername string) (string, error) {
 
 // Gets all playlists of current user - maxResult is set to 50 (default is 5)
 // returns array of all playlists (id, name, count)
-func Playlists(service *youtube.Service) ([]models.Playlist, error) {
+func GetAllPlaylists(service *youtube.Service) ([]models.Playlist, error) {
 
 	// get all playlists
 	call := service.Playlists.List(snippetContentDetails)
@@ -63,7 +63,7 @@ func Playlists(service *youtube.Service) ([]models.Playlist, error) {
 // Gets all the videos of all playlists of mine
 // Different goroutines are appending the same vds slice;
 // WaitGroup waits for all goroutines to finish
-func Videos(service *youtube.Service) (vds []models.Video, err error) {
+func GetAllVideos(service *youtube.Service) (vds []models.Video, err error) {
 
 	// get all playlists of mine
 	call := service.Playlists.List(snippetContentDetails)
@@ -78,7 +78,7 @@ func Videos(service *youtube.Service) (vds []models.Video, err error) {
 
 	for _, pl := range response.Items {
 		go func(p *youtube.Playlist) {
-			v, _ := AllVideosByPlaylist(service, p)
+			v, _ := getAllVideosByPlaylist(service, p)
 			vds = append(vds, v...)
 			wg.Done()
 		}(pl)
@@ -89,7 +89,7 @@ func Videos(service *youtube.Service) (vds []models.Video, err error) {
 }
 
 // Gets all the videos of specific youtube.Playlist
-func AllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]models.Video, error) {
+func getAllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]models.Video, error) {
 
 	var vds []models.Video
 	pageToken := ""
