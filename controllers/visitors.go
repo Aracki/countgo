@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/aracki/countgo/db"
+	"github.com/aracki/countgo/mongodb"
 	"github.com/tomasen/realip"
 )
 
-var mongoDb *db.Database
+var mongoDb *mongodb.Database
 
 func mostFrequentVisitors(w http.ResponseWriter, r *http.Request) {
 

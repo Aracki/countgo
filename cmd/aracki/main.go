@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/aracki/countgo/controllers"
-	"github.com/aracki/countgo/db"
+	"github.com/aracki/countgo/mongodb"
 	myYoutube "github.com/aracki/countgo/youtube"
 	"google.golang.org/api/youtube/v3"
 	"gopkg.in/yaml.v2"
@@ -28,7 +28,7 @@ func logg(message string) {
 	log.Println(message)
 }
 
-func initDB() *db.Database {
+func initDB() *mongodb.Database {
 
 	var configPath string
 
@@ -46,12 +46,12 @@ func initDB() *db.Database {
 	}
 
 	// init mdb with config
-	var c db.Conf
+	var c mongodb.Conf
 	if err := yaml.Unmarshal(config, &c); err != nil {
 		log.Fatalln(err)
 	}
 
-	return db.NewDb(c)
+	return mongodb.NewDb(c)
 }
 
 func initYT() (*youtube.Service, error) {
@@ -72,7 +72,7 @@ func main() {
 	flag.BoolVar(&mongo, "m", false, "use mongo?")
 	flag.Parse()
 
-	var mdb *db.Database
+	var mdb *mongodb.Database
 	if mongo {
 		mdb = initDB()
 	}

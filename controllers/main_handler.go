@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/aracki/countgo/db"
+	"github.com/aracki/countgo/mongodb"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -17,7 +17,7 @@ func handlerWrapper(h http.Handler) http.Handler {
 	})
 }
 
-func StartHandlers(db *db.Database, yts *youtube.Service) {
+func StartHandlers(db *mongodb.Database, yts *youtube.Service) {
 	fmt.Println("Handlers started...")
 
 	// set database pointer
