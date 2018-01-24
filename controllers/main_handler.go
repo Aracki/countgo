@@ -21,9 +21,9 @@ func StartHandlers(db *db.Database, yts *youtube.Service) {
 	fmt.Println("Handlers started...")
 
 	// set database pointer
-	mdb = db
+	mongoDb = db
 	// set youtube service
-	yt = yts
+	youtubeService = yts
 
 	http.Handle(UrlCount, handlerWrapper(http.HandlerFunc(counter)))
 	http.Handle(UrlAggr, handlerWrapper(http.HandlerFunc(mostFrequentVisitors)))
