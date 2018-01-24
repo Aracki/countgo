@@ -3,7 +3,6 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -13,11 +12,7 @@ import (
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/youtube/v3"
 )
-
-const missingClientSecretsMessage = `Please configure OAuth 2.0`
 
 // getTokenFromWeb uses Config to request a Token.
 // It returns the retrieved Token.
@@ -74,29 +69,6 @@ func saveToken(file string, token *oauth2.Token) {
 	}
 	defer f.Close()
 	json.NewEncoder(f).Encode(token)
-}
-
-// readConfigFile will return oauth2 config
-// based on client_secret.json which is located in project root
-func ReadConfigFile(path string) (*oauth2.Config, error) {
-
-	filePath, _ := filepath.Abs(path)
-
-	b, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
-		return nil, err
-	}
-
-	// If modifying these scopes, delete your previously saved credentials
-	// at ~/.credentials/youtube-go-quickstart.json
-	config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
-		return nil, err
-	}
-
-	return config, nil
 }
 
 // getClient uses a Context and Config to retrieve a Token

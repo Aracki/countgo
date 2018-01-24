@@ -1,4 +1,4 @@
-package models
+package model
 
 type Playlist struct {
 	Id          string `json:"id"`

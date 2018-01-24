@@ -9,7 +9,7 @@ import (
 
 	"github.com/aracki/countgo/controllers"
 	"github.com/aracki/countgo/db"
-	"github.com/aracki/countgo/yt"
+	myYoutube "github.com/aracki/countgo/youtube"
 	"google.golang.org/api/youtube/v3"
 	"gopkg.in/yaml.v2"
 )
@@ -56,7 +56,7 @@ func initDB() *db.Database {
 
 func initYT() (*youtube.Service, error) {
 
-	yts, err := yt.InitYoutubeService()
+	yts, err := myYoutube.InitYoutubeService()
 	if err != nil {
 		fmt.Println("Cannot init youtube service")
 		return nil, err

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/aracki/countgo/models"
+	"github.com/aracki/countgo/model"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -38,7 +38,7 @@ func ChannelInfo(service *youtube.Service, forUsername string) (string, error) {
 
 // Gets all playlists of current user - maxResult is set to 50 (default is 5)
 // returns array of all playlists (id, name, count)
-func GetAllPlaylists(service *youtube.Service) ([]models.Playlist, error) {
+func GetAllPlaylists(service *youtube.Service) ([]model.Playlist, error) {
 
 	// get all playlists
 	call := service.Playlists.List(snippetContentDetails)
@@ -48,9 +48,9 @@ func GetAllPlaylists(service *youtube.Service) ([]models.Playlist, error) {
 		return nil, err
 	}
 
-	var pls []models.Playlist
+	var pls []model.Playlist
 	for _, pl := range response.Items {
-		pls = append(pls, models.Playlist{
+		pls = append(pls, model.Playlist{
 			Id:          pl.Id,
 			Title:       pl.Snippet.Title,
 			VideosCount: int(pl.ContentDetails.ItemCount),
@@ -63,7 +63,7 @@ func GetAllPlaylists(service *youtube.Service) ([]models.Playlist, error) {
 // Gets all the videos of all playlists of mine
 // Different goroutines are appending the same vds slice;
 // WaitGroup waits for all goroutines to finish
-func GetAllVideos(service *youtube.Service) (vds []models.Video, err error) {
+func GetAllVideos(service *youtube.Service) (vds []model.Video, err error) {
 
 	// get all playlists of mine
 	call := service.Playlists.List(snippetContentDetails)
@@ -89,9 +89,9 @@ func GetAllVideos(service *youtube.Service) (vds []models.Video, err error) {
 }
 
 // Gets all the videos of specific youtube.Playlist
-func getAllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]models.Video, error) {
+func getAllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]model.Video, error) {
 
-	var vds []models.Video
+	var vds []model.Video
 	pageToken := ""
 
 	for {
@@ -110,7 +110,7 @@ func getAllVideosByPlaylist(service *youtube.Service, pl *youtube.Playlist) ([]m
 			if item.Snippet.Thumbnails != nil && item.Snippet.Thumbnails.Medium != nil {
 				t = item.Snippet.Thumbnails.Medium.Url
 			}
-			vds = append(vds, models.Video{
+			vds = append(vds, model.Video{
 				Title:       item.Snippet.Title,
 				Description: item.Snippet.Description,
 				PublishedAt: item.Snippet.PublishedAt,

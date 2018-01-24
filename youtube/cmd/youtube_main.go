@@ -3,21 +3,21 @@ package main
 import (
 	"fmt"
 
-	"github.com/aracki/countgo/yt"
-	"github.com/aracki/countgo/yt/service"
+	"github.com/aracki/countgo/youtube"
+	"github.com/aracki/countgo/youtube/service"
 )
 
 func main() {
 
 	// init youtube service
-	s, _ := yt.InitYoutubeService()
+	s, _ := youtube.InitYoutubeService()
 
 	// getting IvannSerbia channel info
 	info, _ := service.ChannelInfo(s, "IvannSerbia")
 	fmt.Println(info)
 
 	// getting all the lists info concurrently
-	lists, _ := service.AllPlaylists(s)
+	lists, _ := service.GetAllPlaylists(s)
 	for _, v := range lists {
 		fmt.Printf("%+v", v)
 	}

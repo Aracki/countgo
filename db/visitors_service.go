@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/aracki/countgo/models"
+	"github.com/aracki/countgo/model"
 	"github.com/tomasen/realip"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -15,7 +15,7 @@ const (
 
 func (db Database) InsertVisitor(r *http.Request) error {
 
-	newVisitor := models.Visitor{}
+	newVisitor := model.Visitor{}
 	newVisitor.Ip = realip.RealIP(r)
 	newVisitor.Date = time.Now()
 	for k, v := range r.Header {
@@ -61,7 +61,7 @@ func (db Database) GetDistinctPublicIPs() ([]string, error) {
 	return result, err
 }
 
-func (db Database) GetMostFrequentVisitors() (models.UniqueVisitors, error) {
+func (db Database) GetMostFrequentVisitors() (model.UniqueVisitors, error) {
 
 	queryDistinctCount := []bson.M{
 		{
@@ -95,7 +95,7 @@ func (db Database) GetMostFrequentVisitors() (models.UniqueVisitors, error) {
 
 	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
 
-	var uniqueVisitors models.UniqueVisitors
+	var uniqueVisitors model.UniqueVisitors
 	err := c.Pipe(queryDistinctCount).All(&uniqueVisitors)
 
 	// sort by count number

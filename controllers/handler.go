@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/aracki/countgo/db"
-	"github.com/aracki/countgo/yt/file"
-	"github.com/aracki/countgo/yt/service"
+	"github.com/aracki/countgo/youtube/file"
+	"github.com/aracki/countgo/youtube/service"
 	"github.com/tomasen/realip"
 	"google.golang.org/api/youtube/v3"
 )

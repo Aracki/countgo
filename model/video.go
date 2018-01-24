@@ -1,4 +1,4 @@
-package models
+package model
 
 type Video struct {
 	Title       string `json:"title"`
