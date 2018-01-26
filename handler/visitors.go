@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -18,7 +17,7 @@ func mostFrequentVisitors(w http.ResponseWriter, r *http.Request) {
 
 	uniqueVisitors, err := mongoDb.GetMostFrequentVisitors()
 	if err != nil {
-		log.Fatal(err)
+		w.Write([]byte("Cannot execute distinct query count"))
 	}
 	jsonResponse, err := json.Marshal(uniqueVisitors)
 	w.Write(jsonResponse)
