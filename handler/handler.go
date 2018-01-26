@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/aracki/countgo/mongodb"
@@ -17,7 +16,7 @@ func handlerWrapper(h http.Handler) http.Handler {
 	})
 }
 
-func StartHandlers(db *mongodb.Database, yt gotube.Youtube) {
+func StartHandlers(db *mongodb.Database, yt gotube.Youtube) error {
 	fmt.Println("Handlers started...")
 
 	// set database pointer
@@ -32,8 +31,5 @@ func StartHandlers(db *mongodb.Database, yt gotube.Youtube) {
 	http.Handle(UrlAllVideos, handlerWrapper(http.HandlerFunc(allVideos)))
 	http.Handle(UrlSaveFile, handlerWrapper(http.HandlerFunc(saveFile)))
 
-	err := http.ListenAndServe(":7777", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return http.ListenAndServe(":7777", nil)
 }

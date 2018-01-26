@@ -77,5 +77,7 @@ func main() {
 	} else {
 		fmt.Println("Youtube initialized")
 	}
-	handler.StartHandlers(mdb, yt)
+	if err := handler.StartHandlers(mdb, yt); err != nil {
+		log.Fatalln("Cannot start handlers", err)
+	}
 }

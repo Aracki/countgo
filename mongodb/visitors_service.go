@@ -97,9 +97,12 @@ func (db Database) GetMostFrequentVisitors() (model.UniqueVisitors, error) {
 
 	var uniqueVisitors model.UniqueVisitors
 	err := c.Pipe(queryDistinctCount).All(&uniqueVisitors)
+	if err != nil {
+		return nil, err
+	}
 
 	// sort by count number
 	uniqueVisitors.RankByVisitCount()
 
-	return uniqueVisitors, err
+	return uniqueVisitors, nil
 }
