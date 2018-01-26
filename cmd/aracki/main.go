@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 
 	"github.com/aracki/countgo/controllers"
 	"github.com/aracki/countgo/mongodb"
@@ -14,21 +13,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// custom logging func
-func logg(message string) {
-
-	f, err := os.OpenFile(os.Getenv("GOPATH")+"/visitors.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		fmt.Printf("Error opening file: %v", err)
-	}
-	defer f.Close()
-	log.SetOutput(f)
-
-	// print message to file
-	log.Println(message)
-}
-
-func initDB() (*mongodb.Database, error) {
+// initMongoDb will call New() of mongodb package
+// it makes new mongodb session based on config passed as argument
+// if omit -config it takes default configPath
+func initMongoDb() (*mongodb.Database, error) {
 
 	var configPath string
 
@@ -51,10 +39,11 @@ func initDB() (*mongodb.Database, error) {
 		log.Fatalln(err)
 	}
 
-	return mongodb.NewDb(c), nil
+	return mongodb.New(c), nil
 }
 
-func initYT() (*youtube.Service, error) {
+// initYoutube will call New() of gotube library
+func initYoutube() (*youtube.Service, error) {
 
 	yts, err := gotube.New()
 	if err != nil {
@@ -74,15 +63,19 @@ func main() {
 	var mdb *mongodb.Database
 	var err error
 	if mongo {
-		mdb, err = initDB()
+		mdb, err = initMongoDb()
 		if err != nil {
 			fmt.Println("Cannot initialize mongo ", err)
+		} else {
+			fmt.Println("Mongo initialized")
 		}
 	}
 
-	yts, err := initYT()
+	yts, err := initYoutube()
 	if err != nil {
 		fmt.Println("Cannot initialize youtube ", err)
+	} else {
+		fmt.Println("Youtube initialized")
 	}
 	controllers.StartHandlers(mdb, yts)
 }
