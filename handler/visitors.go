@@ -17,7 +17,8 @@ func mostFrequentVisitors(w http.ResponseWriter, r *http.Request) {
 
 	uniqueVisitors, err := mongoDb.GetMostFrequentVisitors()
 	if err != nil {
-		w.Write([]byte("Cannot execute distinct query count"))
+		throwError(w, "Cannot execute distinct query count")
+		return
 	}
 	jsonResponse, err := json.Marshal(uniqueVisitors)
 	w.Write(jsonResponse)
@@ -28,7 +29,8 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	// get distinct public ip visitors from mongodb
 	uniqueVisitors, err := mongoDb.GetDistinctPublicIPs()
 	if err != nil {
-		w.Write([]byte("Cannot speak with mongodb"))
+		throwError(w, "Cannot speak with mongodb")
+		return
 	}
 	fmt.Println("Unique visitors: " + strconv.Itoa(len(uniqueVisitors)))
 
@@ -39,7 +41,12 @@ func counter(w http.ResponseWriter, r *http.Request) {
 	// again call mongodb for distinct visitors
 	updatedUniqueVisitors, err := mongoDb.GetDistinctPublicIPs()
 	if err != nil {
-		w.Write([]byte("Cannot speak with mongodb"))
+		throwError(w, "Cannot speak with mongodb")
+		return
 	}
 	w.Write([]byte(strconv.Itoa(len(updatedUniqueVisitors))))
+}
+
+func throwError(w http.ResponseWriter, msg string) {
+	w.Write([]byte(msg))
 }
