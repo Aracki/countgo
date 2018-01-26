@@ -13,6 +13,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const mongoConfigPath = "/etc/countgo/config.yml"
+
 // initMongoDb will call New() of mongodb package
 // it makes new mongodb session based on config passed as argument
 // if omit -config it takes default configPath
@@ -24,7 +26,7 @@ func initMongoDb() (*mongodb.Database, error) {
 	flag.StringVar(&configPath, "config", "", "provide config path")
 	flag.Parse()
 	if configPath == "" {
-		configPath = "/etc/countgo/config.yml"
+		configPath = mongoConfigPath
 	}
 
 	// read config file
