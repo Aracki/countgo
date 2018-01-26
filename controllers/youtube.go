@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/aracki/countgo/youtube/file"
-	"github.com/aracki/countgo/youtube/service"
+	"github.com/aracki/gotube/file"
+	"github.com/aracki/gotube/service"
 	"google.golang.org/api/youtube/v3"
 )
 

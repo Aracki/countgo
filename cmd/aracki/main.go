@@ -9,7 +9,7 @@ import (
 
 	"github.com/aracki/countgo/controllers"
 	"github.com/aracki/countgo/mongodb"
-	myYoutube "github.com/aracki/countgo/youtube"
+	"github.com/aracki/gotube"
 	"google.golang.org/api/youtube/v3"
 	"gopkg.in/yaml.v2"
 )
@@ -28,7 +28,7 @@ func logg(message string) {
 	log.Println(message)
 }
 
-func initDB() *mongodb.Database {
+func initDB() (*mongodb.Database, error) {
 
 	var configPath string
 
@@ -42,7 +42,7 @@ func initDB() *mongodb.Database {
 	// read config file
 	config, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 
 	// init mdb with config
@@ -51,14 +51,13 @@ func initDB() *mongodb.Database {
 		log.Fatalln(err)
 	}
 
-	return mongodb.NewDb(c)
+	return mongodb.NewDb(c), nil
 }
 
 func initYT() (*youtube.Service, error) {
 
-	yts, err := myYoutube.InitYoutubeService()
+	yts, err := gotube.New()
 	if err != nil {
-		fmt.Println("Cannot init youtube service")
 		return nil, err
 	} else {
 		return yts, nil
@@ -69,14 +68,21 @@ func main() {
 	fmt.Println("Application started...")
 
 	var mongo bool
-	flag.BoolVar(&mongo, "m", false, "use mongo?")
+	flag.BoolVar(&mongo, "m", false, "start with mongo?")
 	flag.Parse()
 
 	var mdb *mongodb.Database
+	var err error
 	if mongo {
-		mdb = initDB()
+		mdb, err = initDB()
+		if err != nil {
+			fmt.Println("Cannot initialize mongo ", err)
+		}
 	}
 
-	yts, _ := initYT()
+	yts, err := initYT()
+	if err != nil {
+		fmt.Println("Cannot initialize youtube ", err)
+	}
 	controllers.StartHandlers(mdb, yts)
 }
