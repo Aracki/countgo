@@ -1,4 +1,4 @@
-package controllers
+package handler
 
 import (
 	"bytes"
@@ -9,16 +9,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/aracki/gotube/file"
-	"github.com/aracki/gotube/service"
-	"google.golang.org/api/youtube/v3"
+	"github.com/aracki/gotube"
 )
 
-var youtubeService *youtube.Service
+var youtube gotube.Youtube
 
 func channelDescription(w http.ResponseWriter, r *http.Request) {
 
-	info, err := service.ChannelInfo(youtubeService, "IvannSerbia")
+	info, err := youtube.ChannelInfo("IvannSerbia")
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
@@ -27,7 +25,7 @@ func channelDescription(w http.ResponseWriter, r *http.Request) {
 
 func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 
-	pls, err := service.GetAllPlaylists(youtubeService)
+	pls, err := youtube.GetAllPlaylists()
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
@@ -42,7 +40,7 @@ func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 
 func allVideos(w http.ResponseWriter, r *http.Request) {
 
-	vds, err := service.GetAllVideos(youtubeService)
+	vds, err := youtube.GetAllVideos()
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
@@ -59,16 +57,17 @@ func allVideos(w http.ResponseWriter, r *http.Request) {
 // deletes file after it is copied to response via io.Copy
 func saveFile(w http.ResponseWriter, r *http.Request) {
 
-	err := file.WriteAllSongsToFile(youtubeService)
+	err := youtube.WriteAllSongsToFile()
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", file.TempFileName))
+	headerVal := fmt.Sprintf("attachment; filename=%s", gotube.TempFileName)
+	w.Header().Set("Content-Disposition", headerVal)
 
-	fl, _ := ioutil.ReadFile(file.TempFileName)
+	fl, _ := ioutil.ReadFile(gotube.TempFileName)
 	if _, err := io.Copy(w, bytes.NewBuffer(fl)); err != nil {
 		w.Write([]byte(err.Error()))
 	} else {
-		os.Remove(file.TempFileName)
+		os.Remove(gotube.TempFileName)
 	}
 }

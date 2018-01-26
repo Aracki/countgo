@@ -1,4 +1,4 @@
-package controllers
+package handler
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/aracki/countgo/mongodb"
-	"google.golang.org/api/youtube/v3"
+	"github.com/aracki/gotube"
 )
 
 func handlerWrapper(h http.Handler) http.Handler {
@@ -17,13 +17,13 @@ func handlerWrapper(h http.Handler) http.Handler {
 	})
 }
 
-func StartHandlers(db *mongodb.Database, yts *youtube.Service) {
+func StartHandlers(db *mongodb.Database, yt gotube.Youtube) {
 	fmt.Println("Handlers started...")
 
 	// set database pointer
 	mongoDb = db
 	// set youtube service
-	youtubeService = yts
+	youtube = yt
 
 	http.Handle(UrlCount, handlerWrapper(http.HandlerFunc(counter)))
 	http.Handle(UrlAggr, handlerWrapper(http.HandlerFunc(mostFrequentVisitors)))

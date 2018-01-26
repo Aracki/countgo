@@ -6,10 +6,9 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/aracki/countgo/controllers"
+	"github.com/aracki/countgo/handler"
 	"github.com/aracki/countgo/mongodb"
 	"github.com/aracki/gotube"
-	"google.golang.org/api/youtube/v3"
 	"gopkg.in/yaml.v2"
 )
 
@@ -45,13 +44,12 @@ func initMongoDb() (*mongodb.Database, error) {
 }
 
 // initYoutube will call New() of gotube library
-func initYoutube() (*youtube.Service, error) {
+func initYoutube() (gotube.Youtube, error) {
 
-	yts, err := gotube.New()
-	if err != nil {
-		return nil, err
+	if yt, err := gotube.New(); err != nil {
+		return gotube.Youtube{}, err
 	} else {
-		return yts, nil
+		return yt, nil
 	}
 }
 
@@ -73,11 +71,11 @@ func main() {
 		}
 	}
 
-	yts, err := initYoutube()
+	yt, err := initYoutube()
 	if err != nil {
 		fmt.Println("Cannot initialize youtube ", err)
 	} else {
 		fmt.Println("Youtube initialized")
 	}
-	controllers.StartHandlers(mdb, yts)
+	handler.StartHandlers(mdb, yt)
 }
