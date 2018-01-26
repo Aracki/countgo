@@ -38,7 +38,7 @@ func initMgoSession(c Conf) *mgo.Session {
 	return mgoSession.Clone()
 }
 
-func NewDb(c Conf) *Database {
+func New(c Conf) *Database {
 	mgoSession = initMgoSession(c)
 	return &Database{c}
 }
