@@ -5,11 +5,6 @@ import (
 	"time"
 )
 
-const (
-	ballab    = "77.105.34.122"
-	medakovic = "178.148.168.200"
-)
-
 type Visitor struct {
 	Date           time.Time `bson:"date"`
 	Ip             string    `bson:"ip"`
