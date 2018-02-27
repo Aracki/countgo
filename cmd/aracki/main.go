@@ -54,7 +54,6 @@ func initYoutube() (gotube.Youtube, error) {
 }
 
 func main() {
-	fmt.Println("Application started...")
 
 	var mongo bool
 	flag.BoolVar(&mongo, "m", false, "start with mongo?")
@@ -65,19 +64,21 @@ func main() {
 	if mongo {
 		mdb, err = initMongoDb()
 		if err != nil {
-			fmt.Println("Cannot initialize mongo ", err)
+			fmt.Println("Cannot initialize mongo:", err)
 		} else {
-			fmt.Println("Mongo initialized")
+			fmt.Println("Mongo initialized!")
 		}
 	}
 
 	yt, err := initYoutube()
 	if err != nil {
-		fmt.Println("Cannot initialize youtube ", err)
+		fmt.Println("Cannot initialize gotube:", err)
 	} else {
-		fmt.Println("Youtube initialized")
+		fmt.Println("Gotube initialized!")
 	}
 	if err := handler.StartHandlers(mdb, yt); err != nil {
 		log.Fatalln("Cannot start handlers", err)
+	} else {
+		fmt.Println("Handlers started!")
 	}
 }

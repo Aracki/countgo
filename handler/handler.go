@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/aracki/countgo/mongodb"
@@ -17,7 +16,6 @@ func handlerWrapper(h http.Handler) http.Handler {
 }
 
 func StartHandlers(db *mongodb.Database, yt gotube.Youtube) error {
-	fmt.Println("Handlers started...")
 
 	// set database pointer
 	mongoDb = db
