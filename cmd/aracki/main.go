@@ -56,7 +56,7 @@ func initYoutube() (gotube.Youtube, error) {
 func main() {
 
 	var mongo bool
-	flag.BoolVar(&mongo, "m", false, "start with mongo?")
+	flag.BoolVar(&mongo, "m", true, "start with mongo?")
 	flag.Parse()
 
 	var mdb *mongodb.Database
