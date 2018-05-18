@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -64,21 +63,21 @@ func main() {
 	if mongo {
 		mdb, err = initMongoDb()
 		if err != nil {
-			fmt.Println("Cannot initialize mongo:", err)
+			log.Println("Cannot initialize mongo:", err)
 		} else {
-			fmt.Println("Mongo initialized!")
+			log.Println("Mongo initialized!")
 		}
 	}
 
 	yt, err := initYoutube()
 	if err != nil {
-		fmt.Println("Cannot initialize gotube:", err)
+		log.Println("Cannot initialize gotube:", err)
 	} else {
-		fmt.Println("Gotube initialized!")
+		log.Println("Gotube initialized!")
 	}
 	if err := handler.StartHandlers(mdb, yt); err != nil {
 		log.Fatalln("Cannot start handlers", err)
 	} else {
-		fmt.Println("Handlers started!")
+		log.Println("Handlers started!")
 	}
 }
