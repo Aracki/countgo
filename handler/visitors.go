@@ -2,7 +2,7 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -26,16 +26,8 @@ func mostFrequentVisitors(w http.ResponseWriter, r *http.Request) {
 
 func counter(w http.ResponseWriter, r *http.Request) {
 
-	// get distinct public ip visitors from mongodb
-	uniqueVisitors, err := mongoDb.GetDistinctPublicIPs()
-	if err != nil {
-		throwError(w, "Cannot speak with mongodb")
-		return
-	}
-	fmt.Println("Unique visitors: " + strconv.Itoa(len(uniqueVisitors)))
-
 	// insert visitor into db
-	fmt.Println("Inserting visitor with " + realip.RealIP(r) + " IP on date " + time.Now().String())
+	log.Println("Inserting visitor with " + realip.RealIP(r) + " IP on date " + time.Now().String())
 	mongoDb.InsertVisitor(r)
 
 	// again call mongodb for distinct visitors
