@@ -17,4 +17,4 @@ Download all libraries into your _$GOPATH_:
 
 ## Run:
 
-To run application: `./go/bin/main 2>> logfile`
+To run application: `./go/bin/main 2>&1 >> logfile&`
