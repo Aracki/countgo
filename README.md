@@ -14,3 +14,7 @@ Make config.yml in /etc/countgo/ with mongodb properties:
 Download all libraries into your _$GOPATH_:
 
 `go get ./...`
+
+## Run:
+
+To run application: `./go/bin/main 2>&1 >> logfile&`
