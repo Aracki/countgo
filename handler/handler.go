@@ -29,5 +29,8 @@ func StartHandlers(db *mongodb.Database, yt gotube.Youtube) error {
 	http.Handle(UrlAllVideos, handlerWrapper(http.HandlerFunc(allVideos)))
 	http.Handle(UrlSaveFile, handlerWrapper(http.HandlerFunc(saveFile)))
 
-	return http.ListenAndServe(":7777", nil)
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/", handlerWrapper(fs))
+
+	return http.ListenAndServe(":8080", nil)
 }
