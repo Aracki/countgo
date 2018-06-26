@@ -3,7 +3,7 @@ Unique site visits in Go
 
 ## Usage:
 
-Make config.yml in /etc/countgo/ with mongodb properties:
+Generate mongo_config.yml in root directory with following mongo properties:
 ```
  host:
  database: 
