@@ -11,7 +11,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const mongoConfigPath = "/etc/countgo/config.yml"
+const mongoConfigPath = "mongo_config.yml"
 
 // initMongoDb will call New() of mongodb package
 // it makes new mongodb session based on config passed as argument
