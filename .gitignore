@@ -121,3 +121,5 @@ Temporary Items
 client_secret.json
 
 model/list_ip
+
+mongo_config.yml
