@@ -1,34 +1,18 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"github.com/aracki/countgo/handler"
 	"github.com/aracki/countgo/mongodb"
 	"github.com/aracki/gotube"
-	"gopkg.in/yaml.v2"
 )
 
-const mongoConfigPath = "mongo_config.yml"
-
 // initMongoDb will call New() of mongodb package
-// it makes new mongodb session based on config passed as argument
-// if omit -config it takes default configPath
-func initMongoDb() (*mongodb.Database, error) {
-
-	// read config file
-	config, err := ioutil.ReadFile(mongoConfigPath)
-	if err != nil {
-		return nil, err
-	}
-
-	// init mdb with config
-	var c mongodb.Conf
-	if err := yaml.Unmarshal(config, &c); err != nil {
-		log.Fatalln(err)
-	}
+// it makes new mongodb session based on config passed as argument.
+func initMongoDb(c mongodb.Conf) (*mongodb.Database, error) {
 
 	if db, err := mongodb.New(c); err != nil {
 		return nil, err
@@ -52,9 +36,16 @@ func main() {
 	var mdb *mongodb.Database
 	var err error
 
+	// make mongo config struct based on ENV
+	host := os.Getenv("MONGODB_HOST")
+	database := os.Getenv("MONGODB_DATABASE")
+	user := os.Getenv("MONGODB_USERNAME")
+	pwd := os.Getenv("MONGODB_PASSWORD")
+	c := mongodb.Conf{Host: host, Database: database, Username: user, Password: pwd,}
+
 	init := false
 	for init == false {
-		mdb, err = initMongoDb()
+		mdb, err = initMongoDb(c)
 		if err != nil {
 			log.Println("Cannot initialize mongo:", err)
 			log.Println("Trying to connect to mongo in 5 seconds...")

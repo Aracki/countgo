@@ -10,6 +10,11 @@ services:
       context: .
     ports:
       - "8080:8080"
+    environment:
+      MONGODB_HOST: mongo
+      MONGODB_DATABASE: aracki
+      MONGODB_USERNAME: raca
+      MONGODB_PASSWORD: scofield
     depends_on:
       - mongo
     networks:
