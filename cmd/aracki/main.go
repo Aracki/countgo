@@ -1,9 +1,9 @@
 package main
 
 import (
-	"flag"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/aracki/countgo/handler"
 	"github.com/aracki/countgo/mongodb"
@@ -18,17 +18,8 @@ const mongoConfigPath = "mongo_config.yml"
 // if omit -config it takes default configPath
 func initMongoDb() (*mongodb.Database, error) {
 
-	var configPath string
-
-	// read -config flag or find it in /etc/
-	flag.StringVar(&configPath, "config", "", "provide config path")
-	flag.Parse()
-	if configPath == "" {
-		configPath = mongoConfigPath
-	}
-
 	// read config file
-	config, err := ioutil.ReadFile(configPath)
+	config, err := ioutil.ReadFile(mongoConfigPath)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +30,11 @@ func initMongoDb() (*mongodb.Database, error) {
 		log.Fatalln(err)
 	}
 
-	return mongodb.New(c), nil
+	if db, err := mongodb.New(c); err != nil {
+		return nil, err
+	} else {
+		return db, nil
+	}
 }
 
 // initYoutube will call New() of gotube library
@@ -54,18 +49,19 @@ func initYoutube() (gotube.Youtube, error) {
 
 func main() {
 
-	var mongo bool
-	flag.BoolVar(&mongo, "m", true, "start with mongo?")
-	flag.Parse()
-
 	var mdb *mongodb.Database
 	var err error
-	if mongo {
+
+	init := false
+	for init == false {
 		mdb, err = initMongoDb()
 		if err != nil {
 			log.Println("Cannot initialize mongo:", err)
+			log.Println("Trying to connect to mongo in 5 seconds...")
+			time.Sleep(time.Second * 5)
 		} else {
 			log.Println("Mongo initialized!")
+			init = true
 		}
 	}
 

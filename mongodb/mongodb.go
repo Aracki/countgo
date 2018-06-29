@@ -20,7 +20,7 @@ type Conf struct {
 	Password string `yaml:"password"`
 }
 
-func initMgoSession(c Conf) *mgo.Session {
+func initMgoSession(c Conf) (*mgo.Session, error) {
 	if mgoSession == nil {
 		var err error
 		info := &mgo.DialInfo{
@@ -32,13 +32,18 @@ func initMgoSession(c Conf) *mgo.Session {
 		}
 		mgoSession, err = mgo.DialWithInfo(info)
 		if err != nil {
-			log.Fatalf("Create mongo session: %s\n", err)
+			log.Printf("Create mongo session: %s\n", err)
+			return nil, err
 		}
 	}
-	return mgoSession.Clone()
+	// todo why mongo cloning session here?
+	return mgoSession.Clone(), nil
 }
 
-func New(c Conf) *Database {
-	mgoSession = initMgoSession(c)
-	return &Database{c}
+func New(c Conf) (*Database, error) {
+	if _, err := initMgoSession(c); err != nil {
+		return nil, err
+	} else {
+		return &Database{c}, nil
+	}
 }

@@ -19,9 +19,9 @@ services:
     ports:
       - "27017:27017"
     environment:
+      MONGO_INITDB_DATABASE: aracki
       MONGO_INITDB_ROOT_USERNAME: raca  
       MONGO_INITDB_ROOT_PASSWORD: scofield
-      MONGO_INITDB_DATABASE: aracki
     volumes:
       - "~/tmpdocker/aracki/dump/:/dump/"
       - "~/tmpdocker/aracki/mongodb/:/data/db"
