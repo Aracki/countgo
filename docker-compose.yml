@@ -1,0 +1,29 @@
+version: '3.6'
+
+networks:
+  aracki-net:
+    name: aracki-net
+
+services:
+  aracki:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+    networks:
+      - aracki-net
+  mongo:
+    image: mongo:3.6-jessie
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: raca  
+      MONGO_INITDB_ROOT_PASSWORD: scofield
+      MONGO_INITDB_DATABASE: aracki
+    volumes:
+      - "~/tmpdocker/aracki/dump/:/dump/"
+      - "~/tmpdocker/aracki/mongodb/:/data/db"
+    networks:
+      - aracki-net
