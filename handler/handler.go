@@ -32,5 +32,10 @@ func StartHandlers(db *mongodb.Database, yt gotube.Youtube) error {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", handlerWrapper(fs))
 
-	return http.ListenAndServe(":8080", nil)
+    return http.ListenAndServeTLS(":443",
+		"/etc/letsencrypt/live/aracki.me/fullchain.pem",
+		"/etc/letsencrypt/live/aracki.me/privkey.pem",
+		nil)
+
+	//return http.ListenAndServe(":8080", nil)
 }
