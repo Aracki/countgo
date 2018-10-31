@@ -17,6 +17,7 @@ Download all libraries into your _$GOPATH_:
 
 ## Run:
 
-To run application: `./go/bin/main 2>&1 >> logfile&`
+1. Run mongodb: `mongod --dbpath data/db/`
+2. Run application: `./go/bin/main 2>&1 >> logfile&`
 
 UPDATE (7.8.2018): run `go run cmd/aracki/main.go 2>&1 >> logfile&` from root of project
