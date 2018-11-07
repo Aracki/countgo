@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     // ping golang unique visitor counter
-    getRequest("https://aracki.me/count", function (request) {
+    getRequest(location.origin + "/count", function (request) {
         var response = request.currentTarget.response || request.target.responseText;
         var counter = document.getElementById("counter_text");
 
