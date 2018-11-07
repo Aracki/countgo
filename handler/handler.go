@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+	"github.com/spf13/viper"
 	"net/http"
 
 	"github.com/aracki/countgo/mongodb"
@@ -29,13 +31,17 @@ func StartHandlers(db *mongodb.Database, yt gotube.Youtube) error {
 	http.Handle(UrlAllVideos, handlerWrapper(http.HandlerFunc(allVideos)))
 	http.Handle(UrlSaveFile, handlerWrapper(http.HandlerFunc(saveFile)))
 
+	// serve static website
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", handlerWrapper(fs))
 
-    return http.ListenAndServeTLS(":443",
-		"/etc/letsencrypt/live/aracki.me/fullchain.pem",
-		"/etc/letsencrypt/live/aracki.me/privkey.pem",
-		nil)
+	addr := ":" + viper.GetString("port")
+	fmt.Println("::::::::::::::::::::::::::")
+	fmt.Printf("Listen and serve on %s \n", addr)
+	fmt.Println("::::::::::::::::::::::::::")
 
-	//return http.ListenAndServe(":8080", nil)
+	return http.ListenAndServeTLS(addr,
+		viper.GetString("ssl.cert"),
+		viper.GetString("ssl.key"),
+		nil)
 }

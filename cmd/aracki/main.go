@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
 
@@ -54,12 +55,21 @@ func initYoutube() (gotube.Youtube, error) {
 
 func main() {
 
+	// reading configurations from config.yml
+	viper.SetConfigType("yaml")
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalln("Fatal error config file: ", err)
+	}
+
+	// call with -m=false to disable mongo init func
 	var mongo bool
 	flag.BoolVar(&mongo, "m", true, "start with mongo?")
 	flag.Parse()
 
 	var mdb *mongodb.Database
-	var err error
 	if mongo {
 		mdb, err = initMongoDb()
 		if err != nil {
@@ -69,15 +79,17 @@ func main() {
 		}
 	}
 
+	// init gotube library
 	yt, err := initYoutube()
 	if err != nil {
 		log.Println("Cannot initialize gotube:", err)
 	} else {
 		log.Println("Gotube initialized!")
 	}
-	if err := handler.StartHandlers(mdb, yt); err != nil {
-		log.Fatalln("Cannot start handlers", err)
-	} else {
-		log.Println("Handlers started!")
+
+	// start http handlers
+	if httpErr := handler.StartHandlers(mdb, yt); httpErr != nil {
+		log.Fatalln("Cannot start handlers", httpErr)
 	}
+	log.Println("Handlers started!")
 }
