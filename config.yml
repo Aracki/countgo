@@ -1,5 +1,5 @@
 port: 8080
 ssl: 
-    cert: myCA.pem
-    key: myCA.key
+    cert: tls_keys/myCA.pem
+    key: tls_keys/myCA.key
 
