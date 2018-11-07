@@ -123,4 +123,5 @@ client_secret.json
 model/list_ip
 
 mongo_config.yml
+config.yml
 tls_keys/*
