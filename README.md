@@ -1,23 +1,22 @@
 # countgo
-Unique site visits in Go
+Unique site visits in Go. Hobby project.
 
-## Usage:
+## Prepare app:
 
-Generate mongo_config.yml in root directory with following mongo properties:
-```
- host:
- database: 
- username:
- password: 
-```
+Create configuration files in the root directory according to approprate template files.
 
-Download all libraries into your _$GOPATH_:
+1. `mongo_config.yml`
+2. `config.yml`
 
-`go get ./...`
+Download all libraries into your vendor folder:
 
-## Run:
+1. `dep init`
+2. `dep ensure`
+
+## Run app:
 
 1. Run mongodb: `mongod --dbpath data/db/`
-2. Run application: `./go/bin/main 2>&1 >> logfile&`
+2. Run application: `go run cmd/aracki/main.go 2>&1 >> logfile&` from root of project
 
-UPDATE (7.8.2018): run `go run cmd/aracki/main.go 2>&1 >> logfile&` from root of project
+Use flag `-m=false` to run without mongodb.
+  
