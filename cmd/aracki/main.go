@@ -2,14 +2,14 @@ package main
 
 import (
 	"flag"
-	"github.com/spf13/viper"
-	"io/ioutil"
-	"log"
-
 	"github.com/aracki/countgo/handler"
 	"github.com/aracki/countgo/mongodb"
 	"github.com/aracki/gotube"
+	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"log"
+	"os"
 )
 
 const mongoConfigPath = "mongo_config.yml"
@@ -55,6 +55,10 @@ func initYoutube() (gotube.Youtube, error) {
 
 func main() {
 
+	// override stderr as default go log output
+	// simplified logging with shell redirection: >> logfile
+	log.SetOutput(os.Stdout)
+
 	// reading configurations from config.yml
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("config")
@@ -64,11 +68,11 @@ func main() {
 		log.Fatalln("Fatal error config file: ", err)
 	}
 
+	// init mongo database connection
 	// call with -m=false to disable mongo init func
 	var mongo bool
 	flag.BoolVar(&mongo, "m", true, "start with mongo?")
 	flag.Parse()
-
 	var mdb *mongodb.Database
 	if mongo {
 		mdb, err = initMongoDb()
@@ -78,6 +82,7 @@ func main() {
 			log.Println("Mongo initialized!")
 		}
 	}
+
 
 	// init gotube library
 	yt, err := initYoutube()
