@@ -16,7 +16,8 @@ Download all libraries into your vendor folder:
 ## Run app:
 
 1. Run mongodb: `mongod --dbpath data/db/`
-2. Run application: `go run cmd/aracki/main.go >> logfile&` from root of project
+2. Run application: `go run cmd/aracki/main.go >> logfile&` from the root of the project. 
 
 Use flag `-m=false` to run without mongodb.
+Ampersand will start the process in the background.
   
