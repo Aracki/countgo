@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
+	"log"
 	"net/http"
 
 	"github.com/aracki/countgo/mongodb"
@@ -36,9 +36,9 @@ func StartHandlers(db *mongodb.Database, yt gotube.Youtube) error {
 	http.Handle("/", handlerWrapper(fs))
 
 	addr := ":" + viper.GetString("port")
-	fmt.Println("::::::::::::::::::::::::::")
-	fmt.Printf("Listen and serve on %s \n", addr)
-	fmt.Println("::::::::::::::::::::::::::")
+	log.Println("::::::::::::::::::::::::::")
+	log.Printf("Listen and serve on %s \n", addr)
+	log.Println("::::::::::::::::::::::::::")
 
 	return http.ListenAndServeTLS(addr,
 		viper.GetString("ssl.cert"),
