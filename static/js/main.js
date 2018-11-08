@@ -28,5 +28,5 @@ $('#back_to_home2').on('click', function () {
 });
 
 $('#yt_text').on('click', function () {
-    window.location.href = "yt.html";
+    window.location.href = "music";
 });
