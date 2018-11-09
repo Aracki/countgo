@@ -54,10 +54,12 @@ func initYoutube() (gotube.Youtube, error) {
 }
 
 func main() {
-
 	// override stderr as default go log output
 	// simplified logging with shell redirection: >> logfile
 	log.SetOutput(os.Stdout)
+
+	log.Println("app started...")
+	log.Println("reading config file...")
 
 	// reading configurations from config.yml
 	viper.SetConfigType("yaml")
@@ -68,11 +70,14 @@ func main() {
 		log.Fatalln("fatal error config file: ", err)
 	}
 
+	// parse optional flags
+	var mongo, youtube bool
+	flag.BoolVar(&mongo, "m", true, "start with mongo?")
+	flag.BoolVar(&youtube, "y", true, "start with youtube?")
+	flag.Parse()
+
 	// init mongo database connection
 	// call with -m=false to disable mongo init func
-	var mongo bool
-	flag.BoolVar(&mongo, "m", true, "start with mongo?")
-	flag.Parse()
 	var mdb *mongodb.Database
 	if mongo {
 		mdb, err = initMongoDb()
@@ -86,11 +91,17 @@ func main() {
 	}
 
 	// init gotube library
-	yt, err := initYoutube()
-	if err != nil {
-		log.Println("cannot initialize gotube: ", err)
+	// call with -y=false to disable gotube init func
+	var yt gotube.Youtube
+	if youtube {
+		yt, err = initYoutube()
+		if err != nil {
+			log.Println("cannot initialize gotube: ", err)
+		} else {
+			log.Println("gotube initialized!")
+		}
 	} else {
-		log.Println("gotube initialized!")
+		log.Println("skipping gotube init")
 	}
 
 	// start http handlers
