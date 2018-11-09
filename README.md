@@ -1,5 +1,7 @@
-# countgo
-Unique site visits in Go. Hobby project.
+# countgo [![Go Report Card](https://goreportcard.com/badge/github.com/aracki/countgo)](https://goreportcard.com/report/github.com/aracki/countgo)
+Hobby project.
+Unique site visits.
+Playing with Youtube playlists/videos.
 
 ## Prepare app:
 
