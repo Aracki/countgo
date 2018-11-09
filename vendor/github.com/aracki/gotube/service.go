@@ -2,6 +2,7 @@ package gotube
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/aracki/gotube/model"
@@ -30,6 +31,7 @@ func (yt Youtube) ChannelInfo(forUsername string) (string, error) {
 
 	var info string
 
+	// todo more STATS!
 	info = fmt.Sprintf("This channel's ID is %s. Its title is '%s', "+
 		"and it has %d views. \n",
 		response.Items[0].Id,
@@ -54,6 +56,7 @@ func (yt Youtube) GetAllPlaylists() ([]model.Playlist, error) {
 
 	var pls []model.Playlist
 	for _, pl := range response.Items {
+		log.Println(pl.Id)
 		pls = append(pls, model.Playlist{
 			Id:          pl.Id,
 			Title:       pl.Snippet.Title,
