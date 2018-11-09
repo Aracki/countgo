@@ -20,4 +20,4 @@ Download all libraries into your vendor folder:
 
 Use flag `-m=false` to run without mongodb.
 Ampersand will start the process in the background.
-  
+Pipe to `tee logfile` to split logs into stdout and file.
