@@ -19,5 +19,6 @@ Download all libraries into your vendor folder:
 2. Run application: `go run cmd/aracki/main.go >> logfile&` from the root of the project. 
 
 Use flag `-m=false` to run without mongodb.
+Use flag `-y=false` to run without gotube.
 Ampersand will start the process in the background.
 Pipe to `tee logfile` to split logs into stdout and file.
