@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
@@ -18,6 +19,7 @@ func channelDescription(w http.ResponseWriter, r *http.Request) {
 
 	info, err := youtube.ChannelInfo("IvannSerbia")
 	if err != nil {
+		log.Println("channelDescription: service error: ", err.Error())
 		w.Write([]byte(err.Error()))
 	}
 	w.Write([]byte(info))
@@ -27,11 +29,13 @@ func playlistsInfo(w http.ResponseWriter, r *http.Request) {
 
 	pls, err := youtube.GetAllPlaylists()
 	if err != nil {
+		log.Println("playlistsInfo: service error: ", err.Error())
 		w.Write([]byte(err.Error()))
 	}
 
 	jsn, err := json.Marshal(pls)
 	if err != nil {
+		log.Println("playlistsInfo: marshal json error: ", err.Error())
 		w.Write([]byte(err.Error()))
 	}
 
@@ -42,11 +46,13 @@ func allVideos(w http.ResponseWriter, r *http.Request) {
 
 	vds, err := youtube.GetAllVideos()
 	if err != nil {
+		log.Println("allVideos: service error: ", err.Error())
 		w.Write([]byte(err.Error()))
 	}
 
 	jsn, err := json.Marshal(vds)
 	if err != nil {
+		log.Println("allVideos: marshal json error: ", err.Error())
 		w.Write([]byte(err.Error()))
 	}
 
@@ -59,6 +65,7 @@ func saveFile(w http.ResponseWriter, r *http.Request) {
 
 	err := youtube.WriteAllSongsToFile()
 	if err != nil {
+		log.Println("saveFile: service error: ", err.Error())
 		w.Write([]byte(err.Error()))
 	}
 	headerVal := fmt.Sprintf("attachment; filename=%s", gotube.TempFileName)
@@ -66,6 +73,7 @@ func saveFile(w http.ResponseWriter, r *http.Request) {
 
 	fl, _ := ioutil.ReadFile(gotube.TempFileName)
 	if _, err := io.Copy(w, bytes.NewBuffer(fl)); err != nil {
+		log.Println("saveFile: copying error: ", err.Error())
 		w.Write([]byte(err.Error()))
 	} else {
 		os.Remove(gotube.TempFileName)

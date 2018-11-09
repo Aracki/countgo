@@ -65,7 +65,7 @@ func main() {
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatalln("Fatal error config file: ", err)
+		log.Fatalln("fatal error config file: ", err)
 	}
 
 	// init mongo database connection
@@ -77,24 +77,24 @@ func main() {
 	if mongo {
 		mdb, err = initMongoDb()
 		if err != nil {
-			log.Println("Cannot initialize mongo:", err)
+			log.Println("cannot initialize mongo: ", err)
 		} else {
-			log.Println("Mongo initialized!")
+			log.Println("mongo initialized!")
 		}
+	} else {
+		log.Println("skipping mongo init")
 	}
-
 
 	// init gotube library
 	yt, err := initYoutube()
 	if err != nil {
-		log.Println("Cannot initialize gotube:", err)
+		log.Println("cannot initialize gotube: ", err)
 	} else {
-		log.Println("Gotube initialized!")
+		log.Println("gotube initialized!")
 	}
 
 	// start http handlers
 	if httpErr := handler.StartHandlers(mdb, yt); httpErr != nil {
-		log.Fatalln("Cannot start handlers", httpErr)
+		log.Fatalln("cannot start handlers", httpErr)
 	}
-	log.Println("Handlers started!")
 }
