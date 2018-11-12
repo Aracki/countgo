@@ -1,7 +1,7 @@
 # countgo [![Go Report Card](https://goreportcard.com/badge/github.com/aracki/countgo)](https://goreportcard.com/report/github.com/aracki/countgo)
-Hobby project.
-Unique site visits.
-Playing with Youtube playlists/videos.
+Hobby project.<br>
+Unique site visits with MongoDB.<br>
+Playing with Youtube playlists/videos.<br>
 
 ## Prepare app:
 
@@ -20,7 +20,7 @@ Download all libraries into your vendor folder:
 1. Run mongodb: `mongod --dbpath data/db/`
 2. Run application: `go run cmd/aracki/main.go >> logfile&` from the root of the project. 
 
-Use flag `-m=false` to run without mongodb.
-Use flag `-y=false` to run without gotube.
-Ampersand will start the process in the background.
-Pipe to `tee logfile` to split logs into stdout and file.
+Use flag `-m=false` to run without mongodb.<br>
+Use flag `-y=false` to run without gotube.<br>
+Ampersand `&` will start the process in the background.<br>
+Pipe to `tee logfile` to split logs into stdout and file.<br>
