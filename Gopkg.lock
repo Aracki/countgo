@@ -11,7 +11,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:87dcde9002a50e1def14160e818d3c7c27d6899c24246477e866e22ec5f817b0"
+  digest = "1:e816a53c5c546cec533310e3b34f19bb0e57e376e14c080a41036c2b3e1712b1"
   name = "github.com/aracki/gotube"
   packages = [
     ".",
@@ -19,7 +19,7 @@
     "model",
   ]
   pruneopts = "UT"
-  revision = "4a3023520116d9842c965d578401c4b9f2d0f838"
+  revision = "949c81c904bd81e84fe428e41a5add0ea8d6ece3"
 
 [[projects]]
   digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
