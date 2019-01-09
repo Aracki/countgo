@@ -18,7 +18,7 @@ Download all libraries into your vendor folder:
 ## Run app:
 
 1. Run mongodb: `mongod --dbpath data/db/`
-2. Run application: `go run cmd/aracki/main.go >> logfile&` from the root of the project. 
+2. Run application: `go run cmd/aracki/main.go 2>> logfile&` from the root of the project. 
 
 Use flag `-m=false` to run without mongodb.<br>
 Use flag `-y=false` to run without gotube.<br>
