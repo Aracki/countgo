@@ -1,5 +1,5 @@
-# countgo [![Go Report Card](https://goreportcard.com/badge/github.com/aracki/countgo)](https://goreportcard.com/report/github.com/aracki/countgo)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FAracki%2Fcountgo.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FAracki%2Fcountgo?ref=badge_shield)
+# countgo [![Go Report Card](https://goreportcard.com/badge/github.com/aracki/countgo)](https://goreportcard.com/report/github.com/aracki/countgo) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FAracki%2Fcountgo.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FAracki%2Fcountgo?ref=badge_shield)
+
 Hobby project.<br>
 Unique site visits with MongoDB.<br>
 Playing with Youtube playlists/videos.<br>
