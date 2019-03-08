@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0e1f8594527b414890de3e5c92d7affd)](https://app.codacy.com/app/Aracki/countgo?utm_source=github.com&utm_medium=referral&utm_content=Aracki/countgo&utm_campaign=Badge_Grade_Dashboard)
 # countgo [![Go Report Card](https://goreportcard.com/badge/github.com/aracki/countgo)](https://goreportcard.com/report/github.com/aracki/countgo) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FAracki%2Fcountgo.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FAracki%2Fcountgo?ref=badge_shield)
 
 Hobby project.<br>
