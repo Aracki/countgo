@@ -30,5 +30,16 @@ Use flag `-y=false` to run without gotube.<br>
 Ampersand `&` will start the process in the background.<br>
 Pipe to `tee logfile` to split logs into stdout and file.<br>
 
+## Set up TLS
+
+* Local development:
+    * Install [mkcert](https://github.com/FiloSottile/mkcert) tool
+    * `mkcert -install`
+    * `mkcert localhost 127.0.0.1`
+* Production:
+    * Install [certbot](https://github.com/certbot/certbot) for automatic obtaining/renewing Let's Encrypt certificates
+    * `./certbot-auto certonly`
+    
+
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FAracki%2Fcountgo.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FAracki%2Fcountgo?ref=badge_large)
