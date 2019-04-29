@@ -5,8 +5,11 @@
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FAracki%2Fcountgo.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FAracki%2Fcountgo?ref=badge_shield)
 
 Hobby project.<br>
-Unique site visits with MongoDB.<br>
-Playing with Youtube playlists/videos.<br>
+
+It contains:
+* Web server serving [static](https://github.com/Aracki/countgo/tree/master/static) website with TLS. (previously - [Aracki/aracki.me](https://github.com/Aracki/aracki.me))
+* Unique site visits counter with MongoDB.
+* Playing with Youtube playlists/videos.
 
 ## Prepare app
 
