@@ -23,10 +23,10 @@ window.onload = function() {
 
   var messages = [
     'Hey 👋',
-    'I\'m a software developer from Belgrade',
-    'You can contact me at aracki.ivan@gmail.com',
+    'I work as a software engineer in Belgrade',
+    'Listen some of my music playlists,
+    'Contact me at aracki.ivan@gmail.com',
     getCurrentTime(),
-    'I.A.'
   ];
 
   var getFontSize = function() {
