@@ -23,7 +23,7 @@ window.onload = function() {
 
   var messages = [
     'Hey 👋',
-    'I work as a software engineer in Belgrade',
+    'I work as a DevOps engineer in Belgrade',
     'Listen to some of my music playlists',
     'Contact me at aracki.ivan@gmail.com',
     getCurrentTime(),
