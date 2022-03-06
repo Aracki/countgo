@@ -10,11 +10,6 @@ import (
 	"github.com/aracki/gotube"
 )
 
-const (
-    usr = "ivan"
-    pwd = "12345"
-)
-
 func handlerWrapper(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -22,14 +17,10 @@ func handlerWrapper(h http.Handler) http.Handler {
 	})
 }
 
-func handlerWrapperBasicAuth(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		h.ServeHTTP(w, r)
-	})
-}
+func basicAuth(handler http.HandlerFunc) http.HandlerFunc {
 
-func basicAuth(handler http.HandlerFunc, username, password string) http.HandlerFunc {
+    var username = viper.GetString("auth.username")
+    var password = viper.GetString("auth.password")
 
     return func(w http.ResponseWriter, r *http.Request) {
 
@@ -57,11 +48,11 @@ func StartHandlers(db *mongodb.Database, yt gotube.Youtube) error {
 	http.Handle(UrlCount, handlerWrapper(http.HandlerFunc(counter)))
 
     // protected
-	http.HandleFunc(UrlChannelDescription, basicAuth(http.HandlerFunc(channelDescription), usr, pwd))
-	http.HandleFunc(UrlPlInfo, basicAuth(http.HandlerFunc(playlistsInfo), usr, pwd))
-	http.HandleFunc(UrlAllVideos, basicAuth(http.HandlerFunc(allVideos), usr, pwd))
-	http.HandleFunc(UrlSaveFile, basicAuth(http.HandlerFunc(saveFile), usr, pwd))
-    http.HandleFunc(UrlAggr, basicAuth(http.HandlerFunc(mostFrequentVisitors), usr, pwd))
+	http.HandleFunc(UrlChannelDescription, basicAuth(http.HandlerFunc(channelDescription)))
+	http.HandleFunc(UrlPlInfo, basicAuth(http.HandlerFunc(playlistsInfo)))
+	http.HandleFunc(UrlAllVideos, basicAuth(http.HandlerFunc(allVideos)))
+	http.HandleFunc(UrlSaveFile, basicAuth(http.HandlerFunc(saveFile)))
+    http.HandleFunc(UrlAggr, basicAuth(http.HandlerFunc(mostFrequentVisitors)))
 
 	// serve static website
 	fs := http.FileServer(http.Dir("static"))
