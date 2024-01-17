@@ -26,7 +26,3 @@ $('#back_to_home1').on('click', function () {
 $('#back_to_home2').on('click', function () {
     window.location.href = 'index.html';
 });
-
-$('#yt_text').on('click', function () {
-    window.location.href = "music";
-});

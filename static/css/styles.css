@@ -94,41 +94,6 @@ and (orientation : landscape) { /* Laptop STYLES GO HERE */
     clear: left;
 }
 
-/* for main page */
-#back_to_home1 {
-    float: left;
-    clear: left;
-}
-
-#back_to_home2 {
-    float: right;
-    clear: left;
-}
-
-#back_to_home1:hover {
-    cursor: pointer;
-    text-decoration: underline;
-    color: rgb(136, 189, 52);
-}
-#back_to_home2:hover {
-    cursor: pointer;
-    text-decoration: underline;
-    color: rgb(136, 189, 52);
-}
-
-#yt_text {
-    float: left;
-    clear: left;
-    padding-top: 15%;
-    padding-left: 8%;
-}
-
-#yt_text:hover{
-    cursor: pointer;
-    text-decoration: underline;
-    color: #607c54;
-}
-
 .soc {
     display: block;
     font-size: 0;
