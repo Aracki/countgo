@@ -45,6 +45,12 @@ and (orientation : portrait) { /* Mobile portrait STYLES GO HERE */
         bottom: 0;
         width: 100%;
     }
+
+    li {
+        font-size: 10px; /* smaller font size for mobile */
+        padding: 3px; /* reduced padding for mobile */
+        border-bottom: none; /* optional: remove border for mobile */
+    }
 }
 
 @media only screen
@@ -216,35 +222,35 @@ and (orientation : landscape) { /* Laptop STYLES GO HERE */
 }
 
 .icon-7 {
-    color: #91d926;
-    fill: #91d926;
+    color: #d9d926;
+    fill: #d9d926;
 }
 .icon-7:hover {
-    background: #91d926;
+    background: #d9d926;
 }
 
 .icon-8 {
-    color: #6ed926;
-    fill: #6ed926;
+    color: #d9b526;
+    fill: #d9b526;
 }
 .icon-8:hover {
-    background: #6ed926;
+    background: #d9b526;
 }
 
 .icon-9 {
-    color: #4ad926;
-    fill: #4ad926;
+    color: #d99126;
+    fill: #d99126;
 }
 .icon-9:hover {
-    background: #49c625;
+    background: #d99126;
 }
 
 .icon-10 {
-    color: #26d926;
-    fill: #26d926;
+    color: #d96e26;
+    fill: #d96e26;
 }
 .icon-10:hover {
-    background: #26d926;
+    background: #d96e26;
 }
 
 .icon-11 {
