@@ -21,6 +21,15 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
 canvas {
     display: block;
     vertical-align: bottom;
@@ -45,12 +54,6 @@ and (orientation : portrait) { /* Mobile portrait STYLES GO HERE */
         bottom: 0;
         width: 100%;
     }
-
-    li {
-        font-size: 10px; /* smaller font size for mobile */
-        padding: 3px; /* reduced padding for mobile */
-        border-bottom: none; /* optional: remove border for mobile */
-    }
 }
 
 @media only screen
@@ -63,35 +66,29 @@ and (orientation : landscape) { /* Laptop STYLES GO HERE */
         bottom: 0;
     }
 }
-
-.social_media {
+.content {
     position: fixed;
     bottom: 0;
-    width: 100%;
-}
-
-#particles-js {
-    position: fixed;
-    width: 100%;
+    width: 50%;
     height: 100%;
-    top: 0;
-    left: 0;
-    background-color: transparent;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
-.right_side_text {
-    position: fixed;
-    right: 2%;
-    top: 2%;
-
+.main_text {
     color: #48633c;
     font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    padding-top: 10rem;
 }
 
-#counter_text {
-    float: left;
-    clear: left;
+
+.social_media {
+    margin: 0;
+    display: flex;
+    padding-bottom: 5rem;
 }
 
 .soc {
@@ -103,7 +100,7 @@ and (orientation : landscape) { /* Laptop STYLES GO HERE */
 }
 .soc li {
     display: inline-block;
-    margin: 1.1rem;
+    margin: 0.001rem;
 }
 .soc a, .soc svg {
     display: block;
@@ -127,6 +124,29 @@ and (orientation : landscape) { /* Laptop STYLES GO HERE */
     right: 0;
     bottom: 0;
     left: 0;
+}
+
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+}
+
+.right_side_text {
+    position: fixed;
+    right: 2%;
+    top: 2%;
+    color: #48633c;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+}
+
+#counter_text {
+    float: left;
+    clear: left;
 }
 
 .icon-1:hover, .icon-2:hover, .icon-3:hover, .icon-4:hover, .icon-5:hover,
@@ -187,43 +207,43 @@ and (orientation : landscape) { /* Laptop STYLES GO HERE */
 }
 
 .icon-7 {
-    color: #d9d926;
-    fill: #d9d926;
+    color: #b5d926;
+    fill: #b5d926;
 }
 .icon-7:hover {
-    background: #d9d926;
+    background: #b5d926;
 }
 
 .icon-8 {
-    color: #d9b526;
-    fill: #d9b526;
+    color: #d9d926;
+    fill: #d9d926;
 }
 .icon-8:hover {
-    background: #d9b526;
+    background: #d9d926;
 }
 
 .icon-9 {
-    color: #d99126;
-    fill: #d99126;
+    color: #d9b526;
+    fill: #d9b526;
 }
 .icon-9:hover {
-    background: #d99126;
+    background: #d9b526;
 }
 
 .icon-10 {
-    color: #d96e26;
-    fill: #d96e26;
+    color: #d99126;
+    fill: #d99126;
 }
 .icon-10:hover {
-    background: #d96e26;
+    background: #d99126;
 }
 
 .icon-11 {
-    color: #26b943;
-    fill: #26b943;
+    color: #d96e26;
+    fill: #d96e26;
 }
 .icon-11:hover {
-    background: #1b8b37;
+    background: #d96e26;
 }
 
 .icon-12 {

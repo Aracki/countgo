@@ -18,11 +18,3 @@ function getRequest(url, success) {
     xhr.send();
     return xhr;
 }
-
-$('#back_to_home1').on('click', function () {
-    window.location.href = 'index.html';
-});
-
-$('#back_to_home2').on('click', function () {
-    window.location.href = 'index.html';
-});

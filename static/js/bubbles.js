@@ -11,6 +11,8 @@ window.onload = function() {
   var loadingText = '<b>•</b><b>•</b><b>•</b>';
   var messageIndex = 0;
 
+  document.getElementById("pozdrav").innerText = getCurrentTime();
+
   var getCurrentTime = function() {
     var date = new Date();
     var hours =  date.getHours();
@@ -23,8 +25,7 @@ window.onload = function() {
 
   var messages = [
     'Hey 👋',
-    'Listen to some of my music playlists',
-    'Contact me at aracki.ivan@gmail.com',
+    'My name is Ivan Aracki',
     getCurrentTime(),
   ];
 
