@@ -50,76 +50,84 @@
     transition: background-color 0.25s, transform 0.25s ease-out, -webkit-transform 0.25s ease-out;
 }
 
-.icon-2 {
+.icon-1 {
     color: #d96e26;
     fill: #d96e26;
 }
-.icon-2:hover {
+.icon-1:hover {
     background: #d96e26;
 }
 
-.icon-3 {
+.icon-2 {
     color: #d99126;
     fill: #d99126;
 }
-.icon-3:hover {
+.icon-2:hover {
     background: #d99126;
+}
+
+.icon-3 {
+    color: #d9b526;
+    fill: #d9b526;
+}
+.icon-3:hover {
+    background: #d9b526;
 }
 
 .icon-4 {
-    color: #d9b526;
-    fill: #d9b526;
+    color: #d9d926;
+    fill: #d9d926;
 }
 .icon-4:hover {
-    background: #d9b526;
+    background: #d9d926;
 }
 
 .icon-5 {
-    color: #d9d926;
-    fill: #d9d926;
+    color: #b5d926;
+    fill: #b5d926;
 }
 .icon-5:hover {
-    background: #d9d926;
+    background: #b5d926;
 }
 
 .icon-6 {
-    color: #b5d926;
-    fill: #b5d926;
+    color: #91d926;
+    fill: #91d926;
 }
 .icon-6:hover {
-    background: #b5d926;
+    background: #91d926;
 }
 
 .icon-7 {
-    color: #b5d926;
-    fill: #b5d926;
+    color: #6ed926;
+    fill: #6ed926;
 }
 .icon-7:hover {
-    background: #b5d926;
+    background: #6ed926;
 }
 
 .icon-8 {
-    color: #d9d926;
-    fill: #d9d926;
+    color: #4ad926;
+    fill: #4ad926;
 }
 .icon-8:hover {
-    background: #d9d926;
+    background: #4ad926;
 }
 
 .icon-9 {
-    color: #d9b526;
-    fill: #d9b526;
+    color: #26d926;
+    fill: #26d926;
 }
 .icon-9:hover {
-    background: #d9b526;
+    background: #26d926;
 }
 
 .icon-10 {
-    color: #d99126;
-    fill: #d99126;
+    color: #26b943;
+    fill: #26b943;
 }
 .icon-10:hover {
-    background: #d99126;
+    background: #26b943;
 }
 
 .icon-11 {
@@ -128,14 +136,6 @@
 }
 .icon-11:hover {
     background: #d96e26;
-}
-
-.icon-12 {
-    color: #26d96e;
-    fill: #26d96e;
-}
-.icon-12:hover {
-    background: #26d96e;
 }
 
 .icon-13 {
