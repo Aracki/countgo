@@ -18,18 +18,12 @@ body {
     text-align: center;
 }
 
-.content {
-}
-
-.main_text {
-    color: #48633c;
+.text {
+    color: #d9b526;
     font-family: 'Space Mono', monospace;
     font-size: 1.15rem;
     display: block;
     margin-block-end: 3em;
-}
-
-.social_media {
 }
 
 #counter_text {
