@@ -37,6 +37,14 @@ body {
     padding-top: 10rem;
 }
 
+.social_media {
+    display: flex;
+    position: fixed;
+    /* margin: 0;
+    bottom: 0;
+    padding-bottom: 10rem; */
+}
+
 .right_side_text {
     position: fixed;
     right: 2%;
@@ -58,47 +66,4 @@ body {
     top: 0;
     left: 0;
     background-color: transparent;
-}
-
-.social_media {
-    margin: 0;
-    display: flex;
-    padding-bottom: 10rem;
-    position: fixed;
-    bottom: 0;
-}
-
-.icons {
-    display: block;
-    font-size: 0;
-    list-style: none;
-    margin: 0;
-    text-align: center;
-}
-.icons li {
-    display: inline-block;
-    margin: 0.001rem;
-}
-.icons a, .icons svg {
-    display: block;
-}
-.icons a {
-    position: relative;
-    height: 3.15rem;
-    width: 3.15rem;
-}
-.icons svg {
-    height: 60%;
-    width: 60%;
-}
-.icons em {
-    font-size: 14px;
-    line-height: 1.5;
-    margin-top: -0.75em;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    right: 0;
-    bottom: 0;
-    left: 0;
 }
