@@ -26,6 +26,12 @@ body {
     margin-block-end: 3em;
 }
 
+@media (max-width: 720px) {
+    .text {
+        font-size: 0.85rem;
+    }
+}
+
 #counter_text {
     float: left;
     clear: left;

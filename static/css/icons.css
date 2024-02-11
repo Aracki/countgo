@@ -1,9 +1,9 @@
 .icons {
     display: block;
     font-size: 0;
-    list-style: none;
     margin: 0;
     text-align: center;
+    list-style: none;
 }
 .icons li {
     display: inline-block;
@@ -32,6 +32,12 @@
     bottom: 0;
     left: 0;
 }
+
+@media (max-width: 720px) {
+    .icons svg {
+    }
+}
+
 
 .icon-1:hover, .icon-2:hover, .icon-3:hover, .icon-4:hover, .icon-5:hover,
 .icon-6:hover, .icon-7:hover, .icon-8:hover, .icon-9:hover, .icon-10:hover,
