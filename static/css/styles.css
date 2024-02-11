@@ -26,6 +26,10 @@ body {
     margin-block-end: 3em;
 }
 
+.separator {
+    border-top: 0.05px solid #d9b526;
+}
+
 @media (max-width: 720px) {
     .text {
         font-size: 0.85rem;
@@ -38,12 +42,12 @@ body {
 }
 
 .right_side_text {
+    color: #d99126;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
     position: fixed;
     right: 2%;
     top: 2%;
-    color: #48633c;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
 }
 
 #particles-js {
