@@ -7,8 +7,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* min-width: 100vw; */
-  /* min-height: 100vh; */
 }
 
 .container {
@@ -19,30 +17,9 @@ body {
     height: 100%;
 }
 
-.content {
-    position: fixed;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    bottom: 0;
-    margin: 0;
-    width: 50%;
-    height: 100%;
-}
-
-.main_text {
-    color: #48633c;
-    font-family: 'Space Mono', monospace;
-    font-size: 1.15rem;
-    padding-top: 10rem;
-}
-
 .social_media {
     display: flex;
     position: fixed;
-    /* margin: 0;
-    bottom: 0;
-    padding-bottom: 10rem; */
 }
 
 .right_side_text {
@@ -52,6 +29,13 @@ body {
     color: #48633c;
     font-family: 'Space Mono', monospace;
     font-size: 0.7rem;
+}
+
+.main_text {
+    color: #48633c;
+    font-family: 'Space Mono', monospace;
+    font-size: 1.15rem;
+    padding-top: 10rem;
 }
 
 #counter_text {
