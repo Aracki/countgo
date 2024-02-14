@@ -1,12 +1,13 @@
 /**
- * Created by raca on 2/7/17.
+ * Created by Raca on 2/7/17.
+ * Big refactor came in the winter of 2024
  */
 
 particlesJS('particles-js',
     {
         "particles": {
             "number": {
-                "value": 60,
+                "value": 80,
                 "density": {
                     "enable": true,
                     "value_area": 600
@@ -54,8 +55,8 @@ particlesJS('particles-js',
             },
             "move": {
                 "enable": true,
-                "speed": 3,
-                "direction": "none",
+                "speed": 1,
+                "direction": "left",
                 "random": true,
                 "straight": false,
                 "out_mode": "bounce",
