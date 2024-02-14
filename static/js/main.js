@@ -19,14 +19,22 @@ function getRequest(url, success) {
     return xhr;
 }
 
-$('#back_to_home1').on('click', function () {
-    window.location.href = 'index.html';
-});
 
-$('#back_to_home2').on('click', function () {
-    window.location.href = 'index.html';
-});
+window.onload = function() {
+    const textElement = document.getElementById("greeting");
+    const oldText = textElement.textContent;
+    const newText = oldText.replace('Hello', getCurrentTime);
+    textElement.textContent = newText; 
+};
 
-$('#yt_text').on('click', function () {
-    window.location.href = "music";
-});
+var getCurrentTime = function() {
+    var date = new Date();
+    var hours =  date.getHours();
+    var minutes =  date.getMinutes();
+    var current = hours + (minutes * .01);
+    if (current >= 5 && current < 9){
+        return 'Good morning'
+    } else {
+        return 'Hello';
+    }
+};

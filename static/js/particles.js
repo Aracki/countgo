@@ -1,12 +1,13 @@
 /**
- * Created by raca on 2/7/17.
+ * Created by Raca on 2/7/17.
+ * Big refactor came in the winter of 2024
  */
 
 particlesJS('particles-js',
     {
         "particles": {
             "number": {
-                "value": 120,
+                "value": 80,
                 "density": {
                     "enable": true,
                     "value_area": 600
@@ -22,21 +23,16 @@ particlesJS('particles-js',
                     "color": "#b5d926"
                 },
                 "polygon": {
-                    "nb_sides": 8
-                },
-                "image": {
-                    "src": "img/github.svg",
-                    "width": 100,
-                    "height": 100
+                    "nb_sides": 15
                 }
             },
             "opacity": {
-                "value": 0.01,
+                "value": 1,
                 "random": true,
                 "anim": {
                     "enable": false,
                     "speed": 1,
-                    "opacity_min": 0.1,
+                    "opacity_min": 1,
                     "sync": false
                 }
             },
@@ -59,8 +55,8 @@ particlesJS('particles-js',
             },
             "move": {
                 "enable": true,
-                "speed": 2,
-                "direction": "none",
+                "speed": 0.5,
+                "direction": "left",
                 "random": true,
                 "straight": false,
                 "out_mode": "bounce",
@@ -77,7 +73,7 @@ particlesJS('particles-js',
             "events": {
                 "onhover": {
                     "enable": true,
-                    "mode": "grab"
+                    "mode": "repulse"
                 },
                 "onclick": {
                     "enable": true,
@@ -100,8 +96,7 @@ particlesJS('particles-js',
                     "speed": 3
                 },
                 "repulse": {
-                    "distance": 200,
-                    "duration": 0.4
+                    "distance": 300,
                 },
                 "push": {
                     "particles_nb": 4
