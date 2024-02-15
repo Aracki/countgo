@@ -1,9 +1,10 @@
 .icons {
     display: block;
-    font-size: 0;
-    margin: 0;
     text-align: center;
     list-style: none;
+    font-size: 0;
+    margin: 0;
+    padding-left: 20px;
 }
 .icons li {
     display: inline-block;
@@ -20,17 +21,6 @@
 .icons svg {
     height: 60%;
     width: 60%;
-}
-.icons em {
-    font-size: 14px;
-    line-height: 1.5;
-    margin-top: -0.75em;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    right: 0;
-    bottom: 0;
-    left: 0;
 }
 
 @media (min-width: 720px) {
