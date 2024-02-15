@@ -38,10 +38,3 @@ var getCurrentTime = function() {
         return 'Hello';
     }
 };
-
-const changeBgButton = document.getElementById('toggle-img');
-const body = document.body;
-
-changeBgButton.addEventListener('click', function() {
-    body.style.background = "url('../static/img/dunes/blue-silver.webp') no-repeat center center fixed";
-});
