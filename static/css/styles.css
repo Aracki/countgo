@@ -52,6 +52,10 @@ body {
     position: fixed;
     right: 2%;
     top: 2%;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #particles-js {

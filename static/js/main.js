@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (counter != null) {
             document.getElementById("counter_text")
-                .innerHTML = "[" + response + " unique visitors]";
+                .innerHTML = "[" + response + " visitors]";
         }
     })
 });
