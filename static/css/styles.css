@@ -24,6 +24,10 @@ body {
     font-size: 1.15rem;
     display: block;
     margin-block-end: 3em;
+    -webkit-user-select: none;
+    -moz-user-select: none;  
+    -ms-user-select: none;     
+    user-select: none;      
 }
 
 .separator {
