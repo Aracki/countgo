@@ -38,10 +38,10 @@ body {
     .text {
         font-size: 0.85rem;
     }
-    body {
+    html, body {
         overflow: hidden;
+        -webkit-overflow-scrolling: touch; /* Essential for Safari */
     }
-
 }
 
 #counter_text {
