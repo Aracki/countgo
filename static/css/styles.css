@@ -5,6 +5,7 @@ body {
   -o-background-size: cover;
   background-size: cover;
   height: 100vh;
+  width: 100vh;
   margin: 0;
   display: flex;
   justify-content: center;
