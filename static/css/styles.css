@@ -38,6 +38,10 @@ body {
     .text {
         font-size: 0.85rem;
     }
+    body {
+        overflow: hidden;
+    }
+
 }
 
 #counter_text {
