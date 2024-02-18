@@ -1,9 +1,8 @@
 body {
-  background: url('../img/dunes/green-dark.webp') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
+  background: url('../img/dunes/green-dark.webp');
   background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   height: 100vh;
   margin: 0;
   display: flex;
@@ -35,16 +34,6 @@ body {
     border-top: 0.05px solid #d9b526;
 }
 
-@media (max-width: 720px) {
-    .text {
-        font-size: 0.85rem;
-    }
-    html, body {
-        overflow: hidden;
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
 #counter_text {
     float: left;
     clear: left;
@@ -70,4 +59,14 @@ body {
     top: 0;
     left: 0;
     background-color: transparent;
+}
+
+@media (max-width: 720px) {
+    .text {
+        font-size: 0.85rem;
+    }
+    html, body {
+        overflow: hidden;
+        overscroll-behavior: contain;
+    }
 }
