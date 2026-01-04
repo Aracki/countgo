@@ -16,11 +16,6 @@ Create configuration files in the root directory according to approprate templat
 1. `mongo_config.yml`
 2. `config.yml`
 
-Download all libraries into your vendor folder:
-
-1. `dep init`
-2. `dep ensure`
-
 ## Run app
 
 1. Run mongodb: `mongod --dbpath data/db/`
