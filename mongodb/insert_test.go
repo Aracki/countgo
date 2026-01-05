@@ -1,13 +1,14 @@
 package mongodb
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"testing"
+	"time"
 
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"go.mongodb.org/mongo-driver/bson"
 	"gopkg.in/yaml.v2"
 )
 
@@ -29,48 +30,52 @@ func init() {
 	if err := yaml.Unmarshal(config, &c); err != nil {
 		log.Fatalln(err)
 	}
-	db = NewDb(c)
+	db = New(c)
 }
 
 func TestDatabase_InsertVisitor_ShareSession(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	data := bson.M{
 		"test": 1,
 	}
-	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
-	c.Insert(data)
+	collection := db.Collection(cVisitors)
+	_, err := collection.InsertOne(ctx, data)
+	if err != nil {
+		t.Fatalf("Failed to insert: %v", err)
+	}
 }
 
 func TestDatabase_InsertVisitor_CloningSession(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	data := bson.M{
 		"test": 2,
 	}
-	session := mgoSession.Clone()
-	c := session.DB(db.dbconfig.Database).C(cVisitors)
-	c.Insert(data)
-	session.Close()
+	collection := db.Collection(cVisitors)
+	_, err := collection.InsertOne(ctx, data)
+	if err != nil {
+		t.Fatalf("Failed to insert: %v", err)
+	}
 }
 
-func TestDatabase_InsertVisitor_RecreateSession(t *testing.T) {
+func TestDatabase_InsertVisitor_NewClient(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	data := bson.M{
 		"test": 3,
 	}
 
-	info := &mgo.DialInfo{
-		Addrs:    []string{db.dbconfig.Host},
-		Database: db.dbconfig.Database,
-		Username: db.dbconfig.Username,
-		Password: db.dbconfig.Password,
-	}
-	mgoSession, err := mgo.DialWithInfo(info)
+	// Create a new database connection for this test
+	testDb := New(db.dbconfig)
+	defer testDb.Close()
+
+	collection := testDb.Collection(cVisitors)
+	_, err := collection.InsertOne(ctx, data)
 	if err != nil {
-		log.Fatalln(err)
+		t.Fatalf("Failed to insert: %v", err)
 	}
-
-	c := mgoSession.DB(db.dbconfig.Database).C(cVisitors)
-	c.Insert(data)
-
-	mgoSession.Close()
 }

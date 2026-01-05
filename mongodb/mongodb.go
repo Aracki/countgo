@@ -1,16 +1,20 @@
 package mongodb
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"time"
 
-	"gopkg.in/mgo.v2"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var mgoSession *mgo.Session
+var mongoClient *mongo.Client
 
 type Database struct {
 	dbconfig Conf
+	client   *mongo.Client
 }
 
 type Conf struct {
@@ -20,25 +24,54 @@ type Conf struct {
 	Password string `yaml:"password"`
 }
 
-func initMgoSession(c Conf) *mgo.Session {
-	if mgoSession == nil {
+func initMongoClient(c Conf) *mongo.Client {
+	if mongoClient == nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		// Build connection URI
+		var uri string
+		if c.Username != "" && c.Password != "" {
+			uri = fmt.Sprintf("mongodb://%s:%s@%s/?authSource=admin",
+				c.Username, c.Password, c.Host)
+		} else {
+			uri = fmt.Sprintf("mongodb://%s", c.Host)
+		}
+
+		clientOptions := options.Client().ApplyURI(uri)
+
 		var err error
-		info := &mgo.DialInfo{
-			Addrs:    []string{c.Host},
-			Database: c.Database,
-			Username: c.Username,
-			Password: c.Password,
-			Timeout:  time.Second * 1,
-		}
-		mgoSession, err = mgo.DialWithInfo(info)
+		mongoClient, err = mongo.Connect(ctx, clientOptions)
 		if err != nil {
-			log.Fatalf("Create mongo session: %s\n", err)
+			log.Fatalf("Failed to connect to MongoDB: %s\n", err)
 		}
+
+		// Ping to verify connection
+		if err = mongoClient.Ping(ctx, nil); err != nil {
+			log.Fatalf("Failed to ping MongoDB: %s\n", err)
+		}
+
+		log.Println("Connected to MongoDB successfully")
 	}
-	return mgoSession.Clone()
+	return mongoClient
 }
 
 func New(c Conf) *Database {
-	mgoSession = initMgoSession(c)
-	return &Database{c}
+	client := initMongoClient(c)
+	return &Database{dbconfig: c, client: client}
+}
+
+// Collection returns a handle to the specified collection
+func (db *Database) Collection(name string) *mongo.Collection {
+	return db.client.Database(db.dbconfig.Database).Collection(name)
+}
+
+// Close disconnects from MongoDB
+func (db *Database) Close() error {
+	if db.client != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		return db.client.Disconnect(ctx)
+	}
+	return nil
 }
