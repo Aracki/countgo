@@ -1,4 +1,4 @@
-module github.com/aracki/coungo
+module github.com/aracki/countgo
 
 go 1.24.0
 
