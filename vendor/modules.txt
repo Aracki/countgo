@@ -22,11 +22,6 @@ cloud.google.com/go/auth/oauth2adapt
 # cloud.google.com/go/compute/metadata v0.9.0
 ## explicit; go 1.24.0
 cloud.google.com/go/compute/metadata
-# github.com/aracki/countgo v0.0.0-20240218115712-1cd9d818bda0
-## explicit
-github.com/aracki/countgo/handler
-github.com/aracki/countgo/model
-github.com/aracki/countgo/mongodb
 # github.com/aracki/gotube v0.0.0-20260104154735-fb0e0bfd9b5e
 ## explicit
 github.com/aracki/gotube
@@ -415,13 +410,6 @@ google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/known/anypb
 google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/timestamppb
-# gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
-## explicit
-gopkg.in/mgo.v2
-gopkg.in/mgo.v2/bson
-gopkg.in/mgo.v2/internal/json
-gopkg.in/mgo.v2/internal/sasl
-gopkg.in/mgo.v2/internal/scram
 # gopkg.in/yaml.v2 v2.4.0
 ## explicit; go 1.15
 gopkg.in/yaml.v2

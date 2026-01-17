@@ -5,7 +5,6 @@ go 1.24.0
 toolchain go1.24.11
 
 require (
-	github.com/aracki/countgo v0.0.0-20240218115712-1cd9d818bda0
 	github.com/aracki/gotube v0.0.0-20260104154735-fb0e0bfd9b5e
 	github.com/spf13/viper v1.21.0
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
@@ -56,5 +55,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251213004720-97cd9d5aeac2 // indirect
 	google.golang.org/grpc v1.77.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
-	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 )

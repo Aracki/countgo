@@ -18,10 +18,11 @@ type Database struct {
 }
 
 type Conf struct {
-	Host     string `yaml:"host"`
-	Database string `yaml:"database"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
+	Host       string `yaml:"host"`
+	Database   string `yaml:"database"`
+	Username   string `yaml:"username"`
+	Password   string `yaml:"password"`
+	AuthSource string `yaml:"authSource"`
 }
 
 func initMongoClient(c Conf) *mongo.Client {
@@ -32,8 +33,12 @@ func initMongoClient(c Conf) *mongo.Client {
 		// Build connection URI
 		var uri string
 		if c.Username != "" && c.Password != "" {
-			uri = fmt.Sprintf("mongodb://%s:%s@%s/?authSource=admin",
-				c.Username, c.Password, c.Host)
+			authSource := c.AuthSource
+			if authSource == "" {
+				authSource = "admin"
+			}
+			uri = fmt.Sprintf("mongodb://%s:%s@%s/?authSource=%s",
+				c.Username, c.Password, c.Host, authSource)
 		} else {
 			uri = fmt.Sprintf("mongodb://%s", c.Host)
 		}

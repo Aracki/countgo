@@ -126,3 +126,4 @@ mongo_config.yml
 config.yml
 tls_keys/*
 logfile*
+bin/*
