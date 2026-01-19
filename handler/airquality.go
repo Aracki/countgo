@@ -12,6 +12,16 @@ import (
 
 const airPollutionAPI = "http://api.openweathermap.org/data/2.5/air_pollution?lat=44.7866&lon=20.4489&appid=1653d251a5738b5db8134e144db2a708"
 
+var belgradeTZ *time.Location
+
+func init() {
+	var err error
+	belgradeTZ, err = time.LoadLocation("Europe/Belgrade")
+	if err != nil {
+		belgradeTZ = time.UTC
+	}
+}
+
 type airPollutionResponse struct {
 	List []struct {
 		Main struct {
@@ -225,7 +235,7 @@ func airQuality(w http.ResponseWriter, r *http.Request) {
         <div class="updated">Last updated at %s</div>
     </div>
 </body>
-</html>`, aqiColor(aqi), aqi, aqiLabel(aqi), pm25, updatedAt.Format("15:04:05"))
+</html>`, aqiColor(aqi), aqi, aqiLabel(aqi), pm25, updatedAt.In(belgradeTZ).Format("15:04:05"))
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write([]byte(html))
