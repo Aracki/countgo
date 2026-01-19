@@ -58,6 +58,9 @@ func StartHandlers(db *mongodb.Database, yt gotube.Youtube, mongoEnabled bool) e
 	http.HandleFunc(UrlAllVideos, basicAuth(http.HandlerFunc(allVideos)))
 	http.HandleFunc(UrlSaveFile, basicAuth(http.HandlerFunc(saveFile)))
 
+	// air quality handler (unprotected)
+	http.Handle(UrlBg, handlerWrapper(http.HandlerFunc(airQuality)))
+
 	// serve static website
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", handlerWrapper(fs))

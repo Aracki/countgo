@@ -104,6 +104,9 @@ func main() {
 		log.Println("skipping gotube init")
 	}
 
+	// start air quality updater (fetches every 10 minutes)
+	handler.StartAirQualityUpdater()
+
 	// start http handlers
 	if httpErr := handler.StartHandlers(mdb, yt, mongo); httpErr != nil {
 		log.Fatalln("cannot start handlers", httpErr)

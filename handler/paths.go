@@ -7,4 +7,5 @@ const (
 	UrlPlInfo             = "/plInfo"
 	UrlAllVideos          = "/allVideos"
 	UrlSaveFile           = "/saveFile"
+	UrlBg                 = "/bg"
 )
