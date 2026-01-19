@@ -105,7 +105,7 @@ func main() {
 	}
 
 	// start http handlers
-	if httpErr := handler.StartHandlers(mdb, yt); httpErr != nil {
+	if httpErr := handler.StartHandlers(mdb, yt, mongo); httpErr != nil {
 		log.Fatalln("cannot start handlers", httpErr)
 	}
 }

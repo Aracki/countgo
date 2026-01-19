@@ -37,22 +37,26 @@ func basicAuth(handler http.HandlerFunc) http.HandlerFunc {
     }
 }
 
-func StartHandlers(db *mongodb.Database, yt gotube.Youtube) error {
+func StartHandlers(db *mongodb.Database, yt gotube.Youtube, mongoEnabled bool) error {
 
 	// set database pointer
 	mongoDb = db
 	// set youtube service
 	youtube = yt
 
-    // unprotected
-	http.Handle(UrlCount, handlerWrapper(http.HandlerFunc(counter)))
+	// mongo-dependent handlers
+	if mongoEnabled {
+		// unprotected
+		http.Handle(UrlCount, handlerWrapper(http.HandlerFunc(counter)))
+		// protected
+		http.HandleFunc(UrlAggr, basicAuth(http.HandlerFunc(mostFrequentVisitors)))
+	}
 
-    // protected
+	// youtube-dependent handlers (protected)
 	http.HandleFunc(UrlChannelDescription, basicAuth(http.HandlerFunc(channelDescription)))
 	http.HandleFunc(UrlPlInfo, basicAuth(http.HandlerFunc(playlistsInfo)))
 	http.HandleFunc(UrlAllVideos, basicAuth(http.HandlerFunc(allVideos)))
 	http.HandleFunc(UrlSaveFile, basicAuth(http.HandlerFunc(saveFile)))
-    http.HandleFunc(UrlAggr, basicAuth(http.HandlerFunc(mostFrequentVisitors)))
 
 	// serve static website
 	fs := http.FileServer(http.Dir("static"))
