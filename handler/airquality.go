@@ -8,9 +8,11 @@ import (
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
-const airPollutionAPI = "http://api.openweathermap.org/data/2.5/air_pollution?lat=44.7866&lon=20.4489&appid=1653d251a5738b5db8134e144db2a708"
+const airPollutionAPIFormat = "http://api.openweathermap.org/data/2.5/air_pollution?lat=44.7866&lon=20.4489&appid=%s"
 
 var belgradeTZ *time.Location
 
@@ -57,7 +59,12 @@ func StartAirQualityUpdater() {
 }
 
 func fetchAirQuality() {
-	resp, err := http.Get(airPollutionAPI)
+	apiKey := viper.GetString("openweathermap.apikey")
+	if apiKey == "" {
+		log.Println("fetchAirQuality: openweathermap.apikey not configured")
+		return
+	}
+	resp, err := http.Get(fmt.Sprintf(airPollutionAPIFormat, apiKey))
 	if err != nil {
 		log.Println("fetchAirQuality: api error: ", err.Error())
 		return
