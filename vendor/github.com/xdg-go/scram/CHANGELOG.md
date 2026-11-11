@@ -1,5 +1,67 @@
 # CHANGELOG
 
+## v1.4.0 - 2026-11-04
+
+### Changed
+
+- PBKDF2 key derivation now always uses the stdlib `crypto/pbkdf2` package, a
+  FIPS 140-3 certified implementation.
+- Minimum Go version bumped from 1.18 to 1.24.
+- Removed dependency `github.com/xdg-go/pbkdf2`.
+
+## v1.3.0 - 2026-11-03
+
+### Security
+
+- `NewClient` no longer includes the plaintext password, or the rejected
+  character, in the error it returns when SASLprep rejects the password.
+
+### Fixed
+
+- Server now decodes the `=2C` and `=3D` escapes in the client-first
+  username and authzid (RFC 5802 §5.1). Previously, the `CredentialLookup`
+  callback, `Username()`, and `AuthzID()` received the escaped form, so
+  users with `,` or `=` in their names failed with `e=unknown-user`.
+- Server now rejects a username containing `=` not followed by `2C` or `3D`
+  with `e=invalid-username-encoding`, and a malformed authzid with
+  `e=invalid-encoding`.
+
+### Notes
+
+- Behavior change: a `CredentialLookup` that matched the escaped form (e.g.
+  `"a=2Cb"`) must now match the decoded name (`"a,b"`).
+
+## v1.2.0 - 2025-11-24
+
+### Added
+
+- **Channel binding support for SCRAM-PLUS variants** (RFC 5929, RFC 9266)
+- `GetStoredCredentialsWithError()` method that returns errors from PBKDF2
+  key derivation instead of panicking.
+- Support for Go 1.24+ stdlib `crypto/pbkdf2` package, which provides
+  FIPS 140-3 compliance when using SHA-256 or SHA-512 hash functions.
+
+### Changed
+
+- Minimum Go version bumped from 1.11 to 1.18.
+- Migrated from `github.com/xdg-go/pbkdf2` to stdlib `crypto/pbkdf2` on
+  Go 1.24+. Legacy Go versions (<1.24) continue using the external
+  library via build tags for backward compatibility.
+- Internal error handling improved for PBKDF2 key derivation failures.
+
+### Deprecated
+
+- `GetStoredCredentials()` is deprecated in favor of
+  `GetStoredCredentialsWithError()`. The old method panics on PBKDF2
+  errors to maintain backward compatibility but will be removed in a
+  future major version.
+
+### Notes
+
+- FIPS 140-3 compliance is available on Go 1.24+ when using SCRAM-SHA-256
+  or SCRAM-SHA-512 with appropriate salt lengths (≥16 bytes). SCRAM-SHA-1
+  is not FIPS-approved.
+
 ## v1.1.2 - 2022-12-07
 
 - Bump stringprep dependency to v1.0.4 for upstream CVE fix.

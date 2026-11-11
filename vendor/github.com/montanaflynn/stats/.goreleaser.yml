@@ -1,0 +1,25 @@
+version: 2
+
+builds:
+  - skip: true
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^chore: update changelog for"
+  groups:
+    - title: Fix
+      regexp: '^fix:'
+      order: 0
+    - title: Features
+      regexp: '^feat:'
+      order: 1
+    - title: CI
+      regexp: '^ci:'
+      order: 2
+    - title: Chore
+      regexp: '^chore:'
+      order: 3
+    - title: Other
+      order: 999
